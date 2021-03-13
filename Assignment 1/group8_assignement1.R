@@ -30,3 +30,30 @@ View(prices[,1])
 View(prices[1,])
 View(prices[1,1])
 
+#################
+###  Ex 5.1a  ###
+#################
+
+# i)
+
+date <- as.Date(prices[,1])
+prices.ts <- xts(x = prices[,-1], order.by = date)
+returns_results <- Return.calculate(prices = prices.ts, method = 'discrete')
+
+# ii)
+portfolio_EW_returns <- rowMeans(returns_results, na.rm=TRUE)
+portfolio_EW_returnsts <- xts(portfolio_EW_returns, order.by = date)
+
+portfolio_EW <- portfolio_EW_returnsts[-1,]
+
+mean_geometric_return <- mean(portfolio_EW)
+pf_annualized <- (((1+mean_geometric_return)^12)-1)
+
+mean(pf_annualized)
+
+#iii)
+
+3
+# a)
+
+max_novartis <-(max(market_values$Novartis_I, na.rm = TRUE))
