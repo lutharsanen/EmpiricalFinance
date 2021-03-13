@@ -46,14 +46,82 @@ portfolio_EW_returnsts <- xts(portfolio_EW_returns, order.by = date)
 
 portfolio_EW <- portfolio_EW_returnsts[-1,]
 
-mean_geometric_return <- mean(portfolio_EW)
-pf_annualized <- (((1+mean_geometric_return)^12)-1)
+mean_return_EW <- mean(portfolio_EW)
+pf_annualized <- (((1+mean_return_EW)^12)-1)
 
 mean(pf_annualized)
 
 #iii)
 
-3
 # a)
 
-max_novartis <-(max(market_values$Novartis_I, na.rm = TRUE))
+max_novartis <-market_values[which.max(market_values$Novartis_I),]
+print(max_novartis[c("Date","Novartis_I")])
+
+max_nestle <-market_values[which.max(market_values$Nestle_I),]
+print(max_nestle[c("Date","Nestle_I")])
+
+max_roche <-market_values[which.max(market_values$Roche_Holding),]
+print(max_roche[c("Date","Roche_Holding")])
+
+max_ubs <-market_values[which.max(market_values$UBS_I),]
+print(max_ubs[c("Date","UBS_I")])
+
+# b)
+
+MC_monthly <- xts(x = market_values[,-1], order.by = date)
+# Create a vector of the total market cap of the index for a given month
+totMC_monthly <- rowSums(MC_monthly, na.rm = TRUE)
+
+#Compute weights
+VW_weights <- MC_monthly / totMC_monthly
+
+#Lag marketcap
+lag_VW_weights <- lag.xts(VW_weights, 1)
+
+#Now we multiply the weights by the returns
+vw_returns <- lag_VW_weights * returns_results
+
+#Now we sum this across all stock to get the portfolio return
+portfolio_VW_returns <- rowSums(vw_returns, na.rm = TRUE)
+portfolio_VW_returnsts <- xts(portfolio_VW_returns, order.by = date)
+
+#Drop the first row since that should be missing 
+portfolio_VW <- portfolio_VW_returnsts[-1,]
+
+mean_return_VW <- mean(portfolio_VW)
+pf_annualized <- (((1+mean_return_VW)^12)-1)
+
+#4
+
+#a)
+
+print(prod(1 + portfolio_VW_returnsts['1988-06-30/2000-12-29']))
+print(prod(1 + portfolio_EW_returnsts['1988-06-30/2000-12-29']))
+
+print(prod(1 + portfolio_VW_returnsts['2000-12-29/2021-02-26']))
+print(prod(1 + portfolio_EW_returnsts['2000-12-29/2021-02-26']))
+
+print(prod(1 + portfolio_VW_returnsts['1998-07-31/2012-12-31']))
+print(prod(1 + portfolio_EW_returnsts['1998-07-31/2012-12-31']))
+
+print(prod(1 + portfolio_VW_returnsts['2007-05-31/2017-12-29']))
+print(prod(1 + portfolio_EW_returnsts['2007-05-31/2017-12-29']))
+
+print(prod(1 + portfolio_VW_returnsts['2011-08-31/2020-01-31']))
+print(prod(1 + portfolio_EW_returnsts['2011-08-31/2020-01-31']))
+
+#f)
+
+maxDrawdown(portfolio_VW_returnsts['1988-06-30/2000-12-29'])
+maxDrawdown(portfolio_EW_returnsts['1988-06-30/2000-12-29'])
+
+maxDrawdown(portfolio_VW_returnsts['2000-12-29/2020-01-31'])
+maxDrawdown(portfolio_EW_returnsts['2000-12-29/2020-01-31'])
+
+maxDrawdown(portfolio_VW_returnsts['2020-02-28/2020-02-26'])
+maxDrawdown(portfolio_EW_returnsts['2020-02-28/2020-02-26'])
+
+#5
+
+
