@@ -31,7 +31,7 @@ View(prices[1,])
 View(prices[1,1])
 
 #################
-###  Ex 5.1a  ###
+###  Ex 5.1  ###
 #################
 
 # i)
@@ -47,8 +47,7 @@ portfolio_EW_returnsts <- xts(portfolio_EW_returns, order.by = date)
 portfolio_EW <- portfolio_EW_returnsts[-1,]
 
 mean_return_EW <- mean(portfolio_EW)
-pf_annualized <- (((1+mean_return_EW)^12)-1)
-
+pf_annualized_EW <- (((1+mean_return_EW)^12)-1)
 
 
 #iii)
@@ -90,7 +89,7 @@ portfolio_VW_returnsts <- xts(portfolio_VW_returns, order.by = date)
 portfolio_VW <- portfolio_VW_returnsts[-1,]
 
 mean_return_VW <- mean(portfolio_VW)
-pf_annualized <- (((1+mean_return_VW)^12)-1)
+pf_annualized_VW <- (((1+mean_return_VW)^12)-1)
 
 #4
 
@@ -124,7 +123,19 @@ maxDrawdown(portfolio_EW['2020-02-28/2020-02-26'])
 
 #5
 
-#a)
+#################
+###  Ex 5.2  ###
+#################
 
+# i)
+
+
+#################
+###  Ex 5.3  ###
+#################
+
+# i) no code required
+
+# ii)
 
 
