@@ -49,7 +49,7 @@ portfolio_EW <- portfolio_EW_returnsts[-1,]
 mean_return_EW <- mean(portfolio_EW)
 pf_annualized <- (((1+mean_return_EW)^12)-1)
 
-mean(pf_annualized)
+
 
 #iii)
 
@@ -96,32 +96,35 @@ pf_annualized <- (((1+mean_return_VW)^12)-1)
 
 #a)
 
-print(prod(1 + portfolio_VW_returnsts['1988-06-30/2000-12-29']))
-print(prod(1 + portfolio_EW_returnsts['1988-06-30/2000-12-29']))
+print(prod(1 + portfolio_VW['1988-06-30/2000-12-29']))
+print(prod(1 + portfolio_EW['1988-06-30/2000-12-29']))
 
-print(prod(1 + portfolio_VW_returnsts['2000-12-29/2021-02-26']))
-print(prod(1 + portfolio_EW_returnsts['2000-12-29/2021-02-26']))
+print(prod(1 + portfolio_VW['2000-12-29/2021-02-26']))
+print(prod(1 + portfolio_EW['2000-12-29/2021-02-26']))
 
-print(prod(1 + portfolio_VW_returnsts['1998-07-31/2012-12-31']))
-print(prod(1 + portfolio_EW_returnsts['1998-07-31/2012-12-31']))
+print(prod(1 + portfolio_VW['1998-07-31/2012-12-31']))
+print(prod(1 + portfolio_EW['1998-07-31/2012-12-31']))
 
-print(prod(1 + portfolio_VW_returnsts['2007-05-31/2017-12-29']))
-print(prod(1 + portfolio_EW_returnsts['2007-05-31/2017-12-29']))
+print(prod(1 + portfolio_VW['2007-05-31/2017-12-29']))
+print(prod(1 + portfolio_EW['2007-05-31/2017-12-29']))
 
-print(prod(1 + portfolio_VW_returnsts['2011-08-31/2020-01-31']))
-print(prod(1 + portfolio_EW_returnsts['2011-08-31/2020-01-31']))
+print(prod(1 + portfolio_VW['2011-08-31/2020-01-31']))
+print(prod(1 + portfolio_EW['2011-08-31/2020-01-31']))
 
 #f)
 
-maxDrawdown(portfolio_VW_returnsts['1988-06-30/2000-12-29'])
-maxDrawdown(portfolio_EW_returnsts['1988-06-30/2000-12-29'])
+maxDrawdown(portfolio_VW['1988-06-30/2000-12-29'])
+maxDrawdown(portfolio_EW['1988-06-30/2000-12-29'])
 
-maxDrawdown(portfolio_VW_returnsts['2000-12-29/2020-01-31'])
-maxDrawdown(portfolio_EW_returnsts['2000-12-29/2020-01-31'])
+maxDrawdown(portfolio_VW['2000-12-29/2020-01-31'])
+maxDrawdown(portfolio_EW['2000-12-29/2020-01-31'])
 
-maxDrawdown(portfolio_VW_returnsts['2020-02-28/2020-02-26'])
-maxDrawdown(portfolio_EW_returnsts['2020-02-28/2020-02-26'])
+maxDrawdown(portfolio_VW['2020-02-28/2020-02-26'])
+maxDrawdown(portfolio_EW['2020-02-28/2020-02-26'])
 
 #5
+
+#a)
+
 
 
