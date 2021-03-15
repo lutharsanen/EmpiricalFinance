@@ -1,5 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 1")
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 1")
 
 ############
 # Packages #
@@ -142,9 +143,58 @@ maxDrawdown(portfolio_EW['2020-02-28/2020-02-26'])
 pf_annualized_std_EW <- sd(portfolio_EW)*sqrt(12)
 pf_annualized_std_VW <- sd(portfolio_VW)*sqrt(12)
 
+# calculate 12, 24, 36 and 48 months return (+1)
+pf_EW_12 <- rollapplyr(1+portfolio_EW, na.rm=T, 12, prod, fill=NA)
+pf_EW_24 <- rollapplyr(1+portfolio_EW, na.rm=T, 24, prod, fill=NA)
+pf_EW_36 <- rollapplyr(1+portfolio_EW, na.rm=T, 36, prod, fill=NA)
+pf_EW_48 <- rollapplyr(1+portfolio_EW, na.rm=T, 48, prod, fill=NA)
 
-priceslag_12_EW <- lag.xts(prices.ts)
+pf_VW_12 <- rollapplyr(1+portfolio_VW, na.rm=T, 12, prod, fill=NA)
+pf_VW_24 <- rollapplyr(1+portfolio_VW, na.rm=T, 24, prod, fill=NA)
+pf_VW_36 <- rollapplyr(1+portfolio_VW, na.rm=T, 36, prod, fill=NA)
+pf_VW_48 <- rollapplyr(1+portfolio_VW, na.rm=T, 48, prod, fill=NA)
 
+# calculate variance ratios
+VR_EW_1 <- (var(portfolio_EW)/var(pf_EW_12-1,na.rm=T))*(12/1)
+VR_EW_24 <- (var(pf_EW_24-1,na.rm=T)/var(pf_EW_12-1,na.rm=T))*(12/24)
+VR_EW_36 <- (var(pf_EW_36-1,na.rm=T)/var(pf_EW_12-1,na.rm=T))*(12/36)
+VR_EW_48 <- (var(pf_EW_48-1,na.rm=T)/var(pf_EW_12-1,na.rm=T))*(12/48)
 
-# The returns are just pt / pt-1 -1. We do this calculation for all but the first column (dates)
-manualreturns <- prices.ts[-1,]/priceslag[-1,]-1
+VR_VW_1 <- (var(portfolio_VW)/var(pf_VW_12-1,na.rm=T))*(12/1)
+VR_VW_24 <- (var(pf_VW_24-1,na.rm=T)/var(pf_VW_12-1,na.rm=T))*(12/24)
+VR_VW_36 <- (var(pf_VW_36-1,na.rm=T)/var(pf_VW_12-1,na.rm=T))*(12/36)
+VR_VW_48 <- (var(pf_VW_48-1,na.rm=T)/var(pf_VW_12-1,na.rm=T))*(12/48)
+
+# iii) no code required
+
+# iv)
+
+# calculate log returns and repeat ii)
+log_portfolio_EW <- log(portfolio_EW+1)
+log_portfolio_VW <- log(portfolio_VW+1)
+
+# calculate annualized standard deviation for equal and value weighted returns
+log_pf_annualized_std_EW <- sd(log_portfolio_EW)*sqrt(12)
+log_pf_annualized_std_VW <- sd(log_portfolio_VW)*sqrt(12)
+
+# calculate 12, 24, 36 and 48 months return (+1)
+log_pf_EW_12 <- rollapplyr(1+log_portfolio_EW, na.rm=T, 12, prod, fill=NA)
+log_pf_EW_24 <- rollapplyr(1+log_portfolio_EW, na.rm=T, 24, prod, fill=NA)
+log_pf_EW_36 <- rollapplyr(1+log_portfolio_EW, na.rm=T, 36, prod, fill=NA)
+log_pf_EW_48 <- rollapplyr(1+log_portfolio_EW, na.rm=T, 48, prod, fill=NA)
+
+log_pf_VW_12 <- rollapplyr(1+log_portfolio_VW, na.rm=T, 12, prod, fill=NA)
+log_pf_VW_24 <- rollapplyr(1+log_portfolio_VW, na.rm=T, 24, prod, fill=NA)
+log_pf_VW_36 <- rollapplyr(1+log_portfolio_VW, na.rm=T, 36, prod, fill=NA)
+log_pf_VW_48 <- rollapplyr(1+log_portfolio_VW, na.rm=T, 48, prod, fill=NA)
+
+# calculate variance ratios
+log_VR_EW_1 <- (var(log_portfolio_EW)/var(log_pf_EW_12-1,na.rm=T))*(12/1)
+log_VR_EW_24 <- (var(log_pf_EW_24-1,na.rm=T)/var(log_pf_EW_12-1,na.rm=T))*(12/24)
+log_VR_EW_36 <- (var(log_pf_EW_36-1,na.rm=T)/var(log_pf_EW_12-1,na.rm=T))*(12/36)
+log_VR_EW_48 <- (var(log_pf_EW_48-1,na.rm=T)/var(log_pf_EW_12-1,na.rm=T))*(12/48)
+
+log_VR_VW_1 <- (var(log_portfolio_VW)/var(log_pf_VW_12-1,na.rm=T))*(12/1)
+log_VR_VW_24 <- (var(log_pf_VW_24-1,na.rm=T)/var(log_pf_VW_12-1,na.rm=T))*(12/24)
+log_VR_VW_36 <- (var(log_pf_VW_36-1,na.rm=T)/var(log_pf_VW_12-1,na.rm=T))*(12/36)
+log_VR_VW_48 <- (var(log_pf_VW_48-1,na.rm=T)/var(log_pf_VW_12-1,na.rm=T))*(12/48)
