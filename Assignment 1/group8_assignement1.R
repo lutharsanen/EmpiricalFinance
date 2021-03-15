@@ -139,4 +139,13 @@ maxDrawdown(portfolio_EW_returnsts['2020-02-28/2020-02-26'])
 
 # ii)
 
+# calculate annualized standard deviation for equal and value weighted returns
+pf_annualized_std_EW <- sd(portfolio_EW)*sqrt(12)
+pf_annualized_std_VW <- sd(portfolio_VW)*sqrt(12)
 
+
+priceslag_12_EW <- lag.xts(prices.ts)
+
+
+# The returns are just pt / pt-1 -1. We do this calculation for all but the first column (dates)
+manualreturns <- prices.ts[-1,]/priceslag[-1,]-1
