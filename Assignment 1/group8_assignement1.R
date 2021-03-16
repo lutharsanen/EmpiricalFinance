@@ -119,8 +119,8 @@ maxDrawdown(portfolio_EW['1988-06-30/2000-12-29'])
 maxDrawdown(portfolio_VW['2000-12-29/2020-01-31'])
 maxDrawdown(portfolio_EW['2000-12-29/2020-01-31'])
 
-maxDrawdown(portfolio_VW['2020-02-28/2020-02-26'])
-maxDrawdown(portfolio_EW['2020-02-28/2020-02-26'])
+maxDrawdown(portfolio_VW['2020-02-28/2021-02-26'])
+maxDrawdown(portfolio_EW['2020-02-28/2021-02-26'])
 
 #5
 
