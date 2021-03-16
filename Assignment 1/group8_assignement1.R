@@ -128,7 +128,82 @@ maxDrawdown(portfolio_EW['2020-02-28/2021-02-26'])
 ###  Ex 5.2  ###
 #################
 
-# i)
+#1. Calculate Sharp Ratio and SD of the first stock in Dataset 2 using 1-year Swiss Gov. Bond as risk free rate, see Dataset 3
+
+#Mean Return
+mean_return_stock <- mean(rowMeans(returns.ts[,1], na.rm = TRUE), na.rm = TRUE)
+return_annualized_stock <- Return.annualized(mean_return_stock, scale = 12, geometric = TRUE)
+return_annualized_stock
+
+#risk free mean return
+annual_rf <- interest_rates_ts[,2]
+riskfree <- mean (annual_rf/100, na.rm=TRUE)
+riskfree
+
+#rolling SD
+#subset last 12 observation periods
+SD_stock <- mean(roll_sd(rowMeans(returns.ts[,1],na.rm=TRUE),12,na_restore=TRUE),na.rm=TRUE)*12^0.5
+SD_stock
+
+SR_stock <- (return_annualized_stock-riskfree)/SD_stock
+SR_stock
+
+
+
+
+
+###########################################################################################################
+#Portfolio with 25 stocks
+#Mean Returns
+mean_return_portfolio25 <- mean(rowMeans(returns.ts[,1:25], na.rm = TRUE), na.rm = TRUE)
+return_annualized_portfolio25 <- Return.annualized(mean_return_portfolio25, scale = 12, geometric = TRUE)
+return_annualized_portfolio25
+
+#risk free mean return
+annual_rf <- interest_rates_ts[,2]
+riskfree <- mean (monthly_rf/100, na.rm=TRUE)
+riskfree
+
+#rolling SD
+#subset last 12 observation periods
+
+SD_portfolio25 <- mean(roll_sd(rowMeans(returns.ts[,1:25],na.rm=TRUE),12,na_restore=TRUE),na.rm=TRUE)*12^0.5
+SD_portfolio25
+
+SR_portfolio25 <- (return_annualized_portfolio25-riskfree)/SD_portfolio25
+SR_portfolio25
+
+
+###########################################################################################################
+#make a loop
+
+
+annual_rf <- interest_rates_ts[,2]
+riskfree <- mean (monthly_rf/100, na.rm=TRUE)
+riskfree
+
+for (i in seq(1,25,2)){
+  mean_return_portfolio <- mean(rowMeans(returns.ts[,1:i], na.rm = TRUE), na.rm = TRUE)
+  print(paste("Mean", i, ":", mean_return_portfolio))
+  return_annualized_portfolio <- Return.annualized(mean_return_portfolio, scale = 12, geometric = TRUE)
+  print(paste("Mean annualized", i, ":", return_annualized_portfolio))
+  SD_portfolio <- mean(roll_sd(rowMeans(returns.ts[,1:i],na.rm=TRUE),12,na_restore=TRUE),na.rm=TRUE)*12^0.5
+  print(paste("SD",i,":",SD_portfolio))
+  SR_portfolio <- (return_annualized_portfolio-riskfree)/SD_portfolio
+  print(paste("SR",i,":",SR_portfolio))
+}
+
+
+for (i in seq(30,60,5)){
+  mean_return_portfolio <- mean(rowMeans(returns.ts[,1:i], na.rm = TRUE), na.rm = TRUE)
+  print(paste("Mean", i, ":", mean_return_portfolio))
+  return_annualized_portfolio <- Return.annualized(mean_return_portfolio, scale = 12, geometric = TRUE)
+  print(paste("Mean annualized", i, ":", return_annualized_portfolio))
+  SD_portfolio <- mean(roll_sd(rowMeans(returns.ts[,1:i],na.rm=TRUE),12,na_restore=TRUE),na.rm=TRUE)*12^0.5
+  print(paste("SD",i,":",SD_portfolio))
+  SR_portfolio <- (return_annualized_portfolio-riskfree)/SD_portfolio
+  print(paste("SR",i,":",SR_portfolio))
+}
 
 
 #################
