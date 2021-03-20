@@ -111,6 +111,16 @@ print(prod(1 + portfolio_EW['2007-05-31/2017-12-29']))
 print(prod(1 + portfolio_VW['2011-08-31/2020-01-31']))
 print(prod(1 + portfolio_EW['2011-08-31/2020-01-31']))
 
+
+#d)
+print(prod(1 + portfolio_VW['2007-05-31/2017-12-29']))
+print(prod(1 + portfolio_EW['2007-05-31/2014-12-29']))
+
+#e)
+
+print(prod(1 + portfolio_VW['2020-02-28/2021-02-26']))
+print(prod(1 + portfolio_EW['2020-02-28/2020-12-31']))
+
 #f)
 
 maxDrawdown(portfolio_VW['1988-06-30/2000-12-29'])
