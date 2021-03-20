@@ -128,7 +128,7 @@ maxDrawdown(portfolio_EW['2020-02-28/2021-02-26'])
 
 base_data <- data.frame(portfolio_EW)
 adjuster <- tail(cpi[2],-1) 
-adjusted_data <- base_data / adjuster
+adjusted_data <- base_data / (adjuster/100)
 
 mean_return_adjusted <- mean(adjusted_data[["portfolio_EW"]])
 pf_annualized_adjusted <- (((1+mean_return_adjusted)^12)-1)
@@ -137,12 +137,28 @@ print(pf_annualized_adjusted)
 
 #b)
 
-base_data_VW <- data.frame(portfolio_VW)
-adjuster_VW <- tail(cpi[2],-1) 
-adjusted_data_VW <- base_data_VW / adjuster_VW
+base_data_VW <- (portfolio_VW)
+cpi.ts <- xts(x = cpi[,-1], order.by = date)
+adjusted_data_VW <- base_data_VW / (cpi.ts$CPI_as_of_88.06/100)
+
+#####################################
+
+cpi.ts <- xts(x = cpi[,-1], order.by = date)
+
+#######################################
+
+print(prod(1 + adjusted_data_VW['1988-07-29/2021-02-26']))
+
+cum_ret_portfolio_adj <- (cumprod(1 + adjusted_data_VW['1988-07-29/2021-02-26']))
+cum_ret_portfolio_non_adj <- (cumprod(1 + portfolio_VW['1988-07-29/2021-02-26']))
 
 
 print(prod(1 + portfolio_VW['1988-07-29/2021-02-26']))
+
+plot(x=date[0:391], y=cum_ret_portfolio_adj[2:392], type = "l", lty = 1, lwd =3, col = "black", 
+     cex.axis = 1.5, cex.lab = 1.5, ylab = "Cumulative Returns", xlab = "Date", main= "Equal vs Value-weighting")
+lines(date[0:391], cum_ret_portfolio_non_adj[2:392], type = "l", lty = 1, lwd = 3, col = "gray")
+legend("topleft", legend = c("EW Portfolio", "VW Portfolio"), lty = 1, lwd = 3, col = c("gray","black"))
 
 #################
 ###  Ex 5.2  ###
