@@ -156,9 +156,9 @@ cum_ret_portfolio_non_adj <- (cumprod(1 + portfolio_VW['1988-07-29/2021-02-26'])
 print(prod(1 + portfolio_VW['1988-07-29/2021-02-26']))
 
 plot(x=date[0:391], y=cum_ret_portfolio_adj[2:392], type = "l", lty = 1, lwd =3, col = "black", 
-     cex.axis = 1.5, cex.lab = 1.5, ylab = "Cumulative Returns", xlab = "Date", main= "Equal vs Value-weighting")
-lines(date[0:391], cum_ret_portfolio_non_adj[2:392], type = "l", lty = 1, lwd = 3, col = "gray")
-legend("topleft", legend = c("EW Portfolio", "VW Portfolio"), lty = 1, lwd = 3, col = c("gray","black"))
+     cex.axis = 1, cex.lab = 1, ylab = "Cumulative Returns", xlab = "Date", main= "Inflation vs non-inflation")
+lines(date[0:391], cum_ret_portfolio_non_adj[2:392], type = "l", lty = 1, lwd =3, col = "blue")
+legend("topleft", legend = c("Non-inflation", "inflation"), lty = 1, lwd = 3, col = c("blue","black"))
 
 #################
 ###  Ex 5.2  ###
