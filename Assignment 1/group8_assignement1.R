@@ -53,28 +53,28 @@ pf_annualized_EW <- (((1+mean_return_EW)^12)-1)
 
 #iii)
 
-# a)
-
-max_novartis <-market_values[which.max(market_values$Novartis_I),]
-print(max_novartis[c("Date","Novartis_I")])
-
-max_nestle <-market_values[which.max(market_values$Nestle_I),]
-print(max_nestle[c("Date","Nestle_I")])
-
-max_roche <-market_values[which.max(market_values$Roche_Holding),]
-print(max_roche[c("Date","Roche_Holding")])
-
-max_ubs <-market_values[which.max(market_values$UBS_I),]
-print(max_ubs[c("Date","UBS_I")])
-
-# b)
-
 MC_monthly <- xts(x = market_values[,-1], order.by = date)
 # Create a vector of the total market cap of the index for a given month
 totMC_monthly <- rowSums(MC_monthly, na.rm = TRUE)
 
 #Compute weights
 VW_weights <- MC_monthly / totMC_monthly
+
+# a)
+
+max_novartis <-VW_weights[which.max(VW_weights$Novartis_I),]
+print(max_novartis$Novartis_I)
+
+max_nestle <-VW_weights[which.max(VW_weights$Nestle_I),]
+print(max_nestle$Nestle_I)
+
+max_roche <-VW_weights[which.max(VW_weights$Roche_Holding),]
+print(max_roche$Roche_Holding)
+
+max_ubs <-VW_weights[which.max(VW_weights$UBS_I),]
+print(max_ubs$UBS_I)
+
+# b)
 
 #Lag marketcap
 lag_VW_weights <- lag.xts(VW_weights, 1)
@@ -123,6 +123,26 @@ maxDrawdown(portfolio_VW['2020-02-28/2021-02-26'])
 maxDrawdown(portfolio_EW['2020-02-28/2021-02-26'])
 
 #5
+
+#a)
+
+base_data <- data.frame(portfolio_EW)
+adjuster <- tail(cpi[2],-1) 
+adjusted_data <- base_data / adjuster
+
+mean_return_adjusted <- mean(adjusted_data[["portfolio_EW"]])
+pf_annualized_adjusted <- (((1+mean_return_adjusted)^12)-1)
+
+print(pf_annualized_adjusted)
+
+#b)
+
+base_data_VW <- data.frame(portfolio_VW)
+adjuster_VW <- tail(cpi[2],-1) 
+adjusted_data_VW <- base_data_VW / adjuster_VW
+
+
+print(prod(1 + portfolio_VW['1988-07-29/2021-02-26']))
 
 #################
 ###  Ex 5.2  ###
