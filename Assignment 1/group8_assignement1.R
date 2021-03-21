@@ -62,6 +62,7 @@ VW_weights <- MC_monthly / totMC_monthly
 
 # a)
 
+#store row with the highest weight value of the company in a seperate dataframe
 max_novartis <-VW_weights[which.max(VW_weights$Novartis_I),]
 print(max_novartis$Novartis_I)
 
@@ -96,6 +97,7 @@ pf_annualized_VW <- (((1+mean_return_VW)^12)-1)
 
 #a)
 
+# print cumulative return from startdate (first date) to end date (second date)
 print(prod(1 + portfolio_VW['1988-06-30/2000-12-29']))
 print(prod(1 + portfolio_EW['1988-06-30/2000-12-29']))
 
@@ -123,6 +125,7 @@ print(prod(1 + portfolio_EW['2020-02-28/2020-12-31']))
 
 #f)
 
+# calculate max drawdown from start date to end date
 maxDrawdown(portfolio_VW['1988-06-30/2000-12-29'])
 maxDrawdown(portfolio_EW['1988-06-30/2000-12-29'])
 
@@ -136,10 +139,16 @@ maxDrawdown(portfolio_EW['2020-02-28/2021-02-26'])
 
 #a)
 
+#store portfolio_EW data in a date frame
 base_data <- data.frame(portfolio_EW)
+
+# get all columns of cpi expect the first one 
 adjuster <- tail(cpi[2],-1) 
+
+# calculate adjusted data by deviding return values through cpi value/100
 adjusted_data <- base_data / (adjuster/100)
 
+# calculate mean and tranform it to annual return
 mean_return_adjusted <- mean(adjusted_data[["portfolio_EW"]])
 pf_annualized_adjusted <- (((1+mean_return_adjusted)^12)-1)
 
@@ -147,28 +156,25 @@ print(pf_annualized_adjusted)
 
 #b)
 
+
 base_data_VW <- (portfolio_VW)
+# store cpi dates without date in a date
 cpi.ts <- xts(x = cpi[,-1], order.by = date)
+# calculated inflation adjusted VW data
 adjusted_data_VW <- base_data_VW / (cpi.ts$CPI_as_of_88.06/100)
 
-#####################################
-
-cpi.ts <- xts(x = cpi[,-1], order.by = date)
-
-#######################################
-
+# cumulative return after investment of 1 Franc
 print(prod(1 + adjusted_data_VW['1988-07-29/2021-02-26']))
 
+# processing for plot
 cum_ret_portfolio_adj <- (cumprod(1 + adjusted_data_VW['1988-07-29/2021-02-26']))
 cum_ret_portfolio_non_adj <- (cumprod(1 + portfolio_VW['1988-07-29/2021-02-26']))
 
-
-print(prod(1 + portfolio_VW['1988-07-29/2021-02-26']))
-
-plot(x=date[0:391], y=cum_ret_portfolio_adj[2:392], type = "l", lty = 1, lwd =3, col = "black", 
+# plot inflation vs non-inflation graph
+plot(x=date[0:391], y=cum_ret_portfolio_non_adj[2:392], type = "l", lty = 1, lwd =3, col = "black", 
      cex.axis = 1, cex.lab = 1, ylab = "Cumulative Returns", xlab = "Date", main= "Inflation vs non-inflation")
-lines(date[0:391], cum_ret_portfolio_non_adj[2:392], type = "l", lty = 1, lwd =3, col = "blue")
-legend("topleft", legend = c("Non-inflation", "inflation"), lty = 1, lwd = 3, col = c("blue","black"))
+lines(date[0:391], cum_ret_portfolio_adj[2:392], type = "l", lty = 1, lwd =3, col = "blue")
+legend("topleft", legend = c("inflation", "non-inflation"), lty = 1, lwd = 3, col = c("blue","black"))
 
 #################
 ###  Ex 5.2  ###
