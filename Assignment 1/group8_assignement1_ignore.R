@@ -199,7 +199,11 @@ head(interest_rates_ts)
 
 ###### 1.
 
+<<<<<<< HEAD
+#5.2.1. Calculate Sharp Ratio and SD of the first stock in Dataset 2 using 1-year Swiss Gov. Bond as risk free rate, see Dataset 3
+=======
 # Calculate Sharp Ratio and SD of the first stock in Dataset 2 using 1-year Swiss Gov. Bond as risk free rate, see Dataset 3
+>>>>>>> eff377bce1c7f3ca6aabd578dddb5b4904ec5e76
 
 #Mean Return
 mean_return_stock <- mean(rowMeans(returns.ts[,1], na.rm = TRUE), na.rm = TRUE)
@@ -220,12 +224,17 @@ SR_stock
 
 
 
+<<<<<<< HEAD
+###########################################################################################################
+#5.2.2 Portfolio with 25 stocks
+=======
 
 
 ###### 2.
 
 
 #Portfolio with 25 stocks
+>>>>>>> eff377bce1c7f3ca6aabd578dddb5b4904ec5e76
 #Mean Returns
 mean_return_portfolio25 <- mean(rowMeans(returns.ts[,1:25], na.rm = TRUE), na.rm = TRUE)
 return_annualized_portfolio25 <- Return.annualized(mean_return_portfolio25, scale = 12, geometric = TRUE)
@@ -241,6 +250,12 @@ SR_portfolio25
 
 #make a loop
 
+<<<<<<< HEAD
+=======
+annual_rf <- interest_rates_ts[,2]
+riskfree <- mean (annual_rf/100, na.rm=TRUE)
+riskfree
+>>>>>>> eff377bce1c7f3ca6aabd578dddb5b4904ec5e76
 
 for (i in seq(1,25,2)){
   mean_return_portfolio <- mean(rowMeans(returns.ts[,1:i], na.rm = TRUE), na.rm = TRUE)
