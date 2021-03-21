@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 1")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 1")
+# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 1")
 
 ############
 # Packages #
@@ -179,6 +179,16 @@ legend("topleft", legend = c("inflation", "non-inflation"), lty = 1, lwd = 3, co
 #################
 ###  Ex 5.2  ###
 #################
+
+date <- as.Date(returns[,1])
+returns.ts <- xts(x = returns[,-1], order.by = date)
+head(returns.ts)
+
+date <- as.Date(interest_rates[,1])
+interest_rates_ts <- xts(x = interest_rates[,-1], order.by = date)
+head(interest_rates_ts)
+
+
 
 #1. Calculate Sharp Ratio and SD of the first stock in Dataset 2 using 1-year Swiss Gov. Bond as risk free rate, see Dataset 3
 
