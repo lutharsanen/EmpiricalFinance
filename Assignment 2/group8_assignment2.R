@@ -58,14 +58,11 @@ interest_rates <- interest_rates/100
 
 ####### 3.
 
-
-
-
-
-fit_adecco <- lm(returns$Adecco['2016-03-31/2021-2-26'] 
-                - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-2-26']  
-                ~ SMI_TotRet_mon$SMI.Total.Return['2016-03-31/2021-2-26']
-                - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-2-26'])
+# make regression for beta --> only up to August 2020 (because of unavailable data for Adecco)
+fit_adecco <- lm(returns$Adecco['2016-03-31/2020-8-31'] 
+                - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2020-8-31']  
+                ~ SMI_TotRet_mon$SMI.Total.Return['2016-03-31/2020-8-31']
+                - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2020-8-31'])
 result_adecco<- summary(fit_adecco)
 result_adecco
 
