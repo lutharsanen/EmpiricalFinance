@@ -165,13 +165,14 @@ cumulative_returns_p3_daily <- cumprod(1+Returns_P3_daily)
 cumulative_returns_p4_daily <- cumprod(1+Returns_P4_daily)
 cumulative_returns_p5_daily <- cumprod(1+Returns_P5_daily)
 
-plot(x=date_2[2:6176], y=cumulative_returns_p1_daily, ylim=c(0,18),type= "l", lty = 1, lwd = 2, col = "black", cex.axis = 1, cex.lab = 1, ylab = "Cumulative Return", xlab = "Time")
-lines(date_2[2:6176], cumulative_returns_p2_daily, lty = 1, lwd = 2, col = "blue4")
+plot(x=date_2[2:6176], y=cumulative_returns_p1_daily, ylim=c(0,18),type= "l", lty = 1, lwd = 3, col = "turquoise", cex.axis = 1, cex.lab = 1, ylab = "Cumulative Return", xlab = "Time")
+lines(date_2[2:6176], cumulative_returns_p2_daily, lty = 1, lwd = 3, col = "blue4")
 lines(date_2[2:6176], cumulative_returns_p3_daily, lty = 1, lwd = 2, col = "cadetblue")
 lines(date_2[2:6176], cumulative_returns_p4_daily, lty = 1, lwd = 2, col = "darkorchid")
-lines(date_2[2:6176], cumulative_returns_p5_daily, lty = 1, lwd = 2, col = "darkseagreen2")
+lines(date_2[2:6176], cumulative_returns_p5_daily, lty = 1, lwd = 2, col = "green4")
+
 legend("topleft", c("Portfolio 1", "Portfolio 2", "Portfolio 3", "Portfolio 4", "Portfolio 5"), 
-       lty = c(1,1,1,1,1), lwd = 3, bty = "n",cex = 1.2, col = c("black", "blue4", "cadetblue","darkorchid","darkseagreen2"))
+       lty = c(1,1,1,1,1), lwd = 3, bty = "n",cex = 1.2, col = c("turquoise", "blue4", "cadetblue","darkorchid","green4"))
 
 
 
