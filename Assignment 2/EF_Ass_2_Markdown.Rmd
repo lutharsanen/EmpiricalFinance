@@ -1,23 +1,35 @@
-# set working directory 
-# setwd("~/UZH/Empirical Finance/Assignment 1")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 2")
+---
+title: "EF_Assignment2_Markdown"
+author: "Pascal Laesser"
+date: "7 4 2021"
+output: 
+  pdf_document: 
+    keep_tex: yes
+---
 
-############
-# Packages #
-############
-# uncomment the three following lines to install the packages
-# install.packages("xts")
-# install.packages("PerformanceAnalytics")
-# install.packages("psych")
-# install.packages("roll")
-###########
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-# load libraries
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
 library(xts)
 library(PerformanceAnalytics)
 library(psych)
 library(roll)
-library(data.table)
 
 
 
@@ -107,41 +119,13 @@ row_swisscom <- c(result_swisscom$coefficients[2,1],
                 result_swisscom$coefficients[1,2])
 
 beta_table <- rbind(row_adecco, row_cs, row_lafarge, row_swisscom)
-beta_table <- round(beta_table,4)
 rownames(beta_table) <- c("Adecco", "Credit Suisse", "LafargeHolcim", "Swisscom")
 colnames(beta_table) <- c("Beta", "Alpha", "R2", "Res. Std. Dev.", "Std. Err. Beta", "Std Err. Alpha")
 
-
-####### 4.
-
-# no code needed
-
-####### 5.
-
-t_values <- data.table(c(result_adecco$coefficients[2,3], result_cs$coefficients[2,3], result_lafarge$coefficients[2,3], result_swisscom$coefficients[2,3]))
-colnames(t_values) <- c("Adecco", "Credit Suisse", "LafargeHolcim", "Swisscom")
-
-t_values <- data.table(Adecco = result_adecco$coefficients[2,3],
-                       Credit_Suisse = result_cs$coefficients[2,3],
-                       LafargeHolcim = result_lafarge$coefficients[2,3],
-                       Swisscom= result_swisscom$coefficients[2,3])
-
-#################
-###  Ex 5.2  ###
-#################
-
-###### 1.
+library(knitr)
+kable(beta_table)
 
 
-###### 2.
+```
 
-
-
-#################
-###  Ex 5.3  ###
-#################
-
-###### 1. 
-
-###### 2.
-
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
