@@ -127,7 +127,10 @@ t_values <- data.table(Adecco = result_adecco$coefficients[2,3],
 
 
 ####### 6.
-
+AF_betas <- data.table(Adecco = (result_adecco$coefficients[2,1]*2/3+1/3),
+                       Credit_Suisse = (result_cs$coefficients[2,1]*2/3+1/3),
+                       LafargeHolcim = (result_lafarge$coefficients[2,1]*2/3+1/3),
+                       Swisscom= (result_swisscom$coefficients[2,1]*2/3+1/3))
 
 
 #################

@@ -121,7 +121,7 @@ row_swisscom <- c(result_swisscom$coefficients[2,1],
 beta_table <- rbind(row_adecco, row_cs, row_lafarge, row_swisscom)
 beta_table <- round(beta_table,4)
 rownames(beta_table) <- c("Adecco", "Credit Suisse", "LafargeHolcim", "Swisscom")
-colnames(beta_table) <- c("Beta", "Alpha", "R2", "Res. Std. Dev.", "Std. Err. Beta", "Std Err. Alpha")
+colnames(beta_table) <- c("Beta", "Alpha", "R2", "Res. SD", "SE Beta", "SE Alpha")
 
 library(knitr)
 kable(beta_table)
@@ -133,6 +133,12 @@ t_values <- data.table(Adecco = result_adecco$coefficients[2,3],
                        LafargeHolcim = result_lafarge$coefficients[2,3],
                        Swisscom= result_swisscom$coefficients[2,3])
 kable(t_values)
+
+AF_betas <- data.table(Adecco = (result_adecco$coefficients[2,1]*2/3+1/3),
+                       Credit_Suisse = (result_cs$coefficients[2,1]*2/3+1/3),
+                       LafargeHolcim = (result_lafarge$coefficients[2,1]*2/3+1/3),
+                       Swisscom= (result_swisscom$coefficients[2,1]*2/3+1/3))
+kable(AF_betas)
 
 
 
