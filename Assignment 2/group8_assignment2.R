@@ -59,7 +59,7 @@ interest_rates <- interest_rates/100
 
 ####### 3.
 
-# make regression for beta and other (first calculate SMI excess return and the same for each stock)
+# make regression for beta and other parameters for the four companies(first calculate SMI excess return and the same for each stock)
 SMI_excess <- SMI_TotRet_mon$SMI.Total.Return['2016-03-31/2021-02-26'] - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-02-26']
 
 adecco_excess <- returns$Adecco['2016-03-31/2021-02-26'] - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-02-26']
@@ -106,10 +106,11 @@ row_swisscom <- c(result_swisscom$coefficients[2,1],
                 result_swisscom$coefficients[2,2],
                 result_swisscom$coefficients[1,2])
 
+# put results into a table
 beta_table <- rbind(row_adecco, row_cs, row_lafarge, row_swisscom)
 beta_table <- round(beta_table,4)
 rownames(beta_table) <- c("Adecco", "Credit Suisse", "LafargeHolcim", "Swisscom")
-colnames(beta_table) <- c("Beta", "Alpha", "R2", "Res. Std. Dev.", "Std. Err. Beta", "Std Err. Alpha")
+colnames(beta_table) <- c("Beta", "Alpha", "R2", "Res. SD", "SE Beta", "SE Alpha")
 
 
 ####### 4.
@@ -118,13 +119,16 @@ colnames(beta_table) <- c("Beta", "Alpha", "R2", "Res. Std. Dev.", "Std. Err. Be
 
 ####### 5.
 
-t_values <- data.table(c(result_adecco$coefficients[2,3], result_cs$coefficients[2,3], result_lafarge$coefficients[2,3], result_swisscom$coefficients[2,3]))
-colnames(t_values) <- c("Adecco", "Credit Suisse", "LafargeHolcim", "Swisscom")
-
+# make table with Beta t-values
 t_values <- data.table(Adecco = result_adecco$coefficients[2,3],
                        Credit_Suisse = result_cs$coefficients[2,3],
                        LafargeHolcim = result_lafarge$coefficients[2,3],
                        Swisscom= result_swisscom$coefficients[2,3])
+
+
+####### 6.
+
+
 
 #################
 ###  Ex 5.2  ###
