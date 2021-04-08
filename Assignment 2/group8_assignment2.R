@@ -141,7 +141,103 @@ t_values <- data.table(Adecco = result_adecco$coefficients[2,3],
 ###  Ex 5.3  ###
 #################
 
+prices_daily <- A2_dataset_04
+#View(prices_daily)
+betas <- A2_dataset_05
+#View(betas)
+
+
+date <- as.Date(prices_daily[,1])
+prices_daily.ts <- xts(x = prices_daily[,-1], order.by = date)
+
+date_2 <- as.Date(betas[,1])
+betas.ts <- xts(x = betas[,-1], order.by = date_2)
+
+
 ###### 1. 
+# Calculate Returns
+
+returns_daily <- Return.calculate(prices = prices_daily.ts, method = 'discrete')
+# View(returns_daily)
+
+returns_daily.ts <- as.matrix(returns_daily['1994-04-30/2017-12-29'])
+# View(returns_daily.ts)
+
+daily_betas.ts <- as.matrix(betas.ts['1994-04-29/2017-12-28'])
+# View(daily_betas.ts)
+
+
+# create empty vectors for loop
+Returns_P1_daily <- as.matrix(rep(NA,dim(daily_betas.ts)[1]))
+Returns_P2_daily <- as.matrix(rep(NA,dim(daily_betas.ts)[1]))
+Returns_P3_daily <- as.matrix(rep(NA,dim(daily_betas.ts)[1]))
+Returns_P4_daily <- as.matrix(rep(NA,dim(daily_betas.ts)[1]))
+Returns_P5_daily <- as.matrix(rep(NA,dim(daily_betas.ts)[1]))
+
+
+for (j in 1:dim(daily_betas.ts)[1])
+{
+  
+  Subset_daily <- daily_betas.ts[j,]
+  
+  
+  
+  P1_P_daily <- subset(Subset_daily,subset = Subset_daily < quantile(Subset_daily , c(0.2),na.rm=TRUE))
+  P2_P_daily <- subset(Subset_daily,subset = Subset_daily < quantile(Subset_daily , c(0.4),na.rm=TRUE)& Subset_daily >= quantile(Subset_daily , c(0.2),na.rm=TRUE))
+  P3_P_daily <- subset(Subset_daily,subset = Subset_daily < quantile(Subset_daily , c(0.6),na.rm=TRUE)& Subset_daily >= quantile(Subset_daily , c(0.4),na.rm=TRUE))
+  P4_P_daily <- subset(Subset_daily,subset = Subset_daily < quantile(Subset_daily , c(0.8),na.rm=TRUE)& Subset_daily >= quantile(Subset_daily , c(0.6),na.rm=TRUE))
+  P5_P_daily <- subset(Subset_daily,subset = Subset_daily >= quantile(Subset_daily, c(0.8),na.rm=TRUE))
+  
+  # calculate mean returns
+  
+  Returns_P1_daily[j] <- mean(returns_daily.ts[j,names(P1_P_daily)],na.rm=TRUE)
+  Returns_P2_daily[j] <- mean(returns_daily.ts[j,names(P2_P_daily)],na.rm=TRUE)
+  Returns_P3_daily[j] <- mean(returns_daily.ts[j,names(P3_P_daily)],na.rm=TRUE)
+  Returns_P4_daily[j] <- mean(returns_daily.ts[j,names(P4_P_daily)],na.rm=TRUE)
+  Returns_P5_daily[j] <- mean(returns_daily.ts[j,names(P5_P_daily)],na.rm=TRUE)
+}
+
+# Mean returns
+
+print(mean_Return_P1<-mean(Returns_P1_daily,na.rm=TRUE))
+print(mean_Return_P2<-mean(Returns_P2_daily,na.rm=TRUE))
+print(mean_Return_P3<-mean(Returns_P3_daily,na.rm=TRUE))
+print(mean_Return_P4<-mean(Returns_P4_daily,na.rm=TRUE))
+print(mean_Return_P5<-mean(Returns_P5_daily,na.rm=TRUE))
+
+# Mean standard deviations of the portfolios
+print(SD_P1<-sd(Returns_P1_daily,na.rm=TRUE))
+print(SD_P2<-sd(Returns_P2_daily,na.rm=TRUE))
+print(SD_P3<-sd(Returns_P3_daily,na.rm=TRUE))
+print(SD_P4<-sd(Returns_P4_daily,na.rm=TRUE))
+print(SD_P5<-sd(Returns_P5_daily,na.rm=TRUE))
+
 
 ###### 2.
+
+# plot results
+
+cumulative_returns_p1_daily <- cumprod(1+Returns_P1_daily)
+cumulative_returns_p2_daily <- cumprod(1+Returns_P2_daily)
+cumulative_returns_p3_daily <- cumprod(1+Returns_P3_daily)
+cumulative_returns_p4_daily <- cumprod(1+Returns_P4_daily)
+cumulative_returns_p5_daily <- cumprod(1+Returns_P5_daily)
+
+plot(x=date_2[2:6176], y=cumulative_returns_p1_daily, ylim=c(0,18),type= "l", lty = 1, lwd = 3, col = "turquoise", cex.axis = 1, cex.lab = 1, ylab = "Cumulative Return", xlab = "Time")
+lines(date_2[2:6176], cumulative_returns_p2_daily, lty = 1, lwd = 3, col = "blue4")
+lines(date_2[2:6176], cumulative_returns_p3_daily, lty = 1, lwd = 2, col = "cadetblue")
+lines(date_2[2:6176], cumulative_returns_p4_daily, lty = 1, lwd = 2, col = "darkorchid")
+lines(date_2[2:6176], cumulative_returns_p5_daily, lty = 1, lwd = 2, col = "green4")
+
+legend("topleft", c("Portfolio 1", "Portfolio 2", "Portfolio 3", "Portfolio 4", "Portfolio 5"), 
+       lty = c(1,1,1,1,1), lwd = 3, bty = "n",cex = 1.2, col = c("turquoise", "blue4", "cadetblue","darkorchid","green4"))
+
+
+
+
+
+
+
+
+
 
