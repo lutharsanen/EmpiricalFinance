@@ -6,10 +6,11 @@
 # Packages #
 ############
 # uncomment the three following lines to install the packages
-# install.packages("xts")
-# install.packages("PerformanceAnalytics")
-# install.packages("psych")
-# install.packages("roll")
+ install.packages("xts")
+ install.packages("PerformanceAnalytics")
+ install.packages("psych")
+ install.packages("roll")
+ install.packages("data.table")
 ###########
 
 # load libraries
@@ -139,10 +140,15 @@ AF_betas <- data.table(Adecco = (result_adecco$coefficients[2,1]*2/3+1/3),
 
 ###### 1.
 
+#use the function roll::roll_lm of "roll" package to compute rolling window betas 
+#width=60 means the rolling window acounts for 60 periods.
+#intercept=True means alpha is allowed.
+apply.rolling(cs_excess[,1,drop=FALSE], width=60)
+
 
 ###### 2.
 
-
+#no code required
 
 #################
 ###  Ex 5.3  ###
