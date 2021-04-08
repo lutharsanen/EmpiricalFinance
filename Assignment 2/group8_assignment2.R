@@ -143,8 +143,40 @@ AF_betas <- data.table(Adecco = (result_adecco$coefficients[2,1]*2/3+1/3),
 #use the function roll::roll_lm of "roll" package to compute rolling window betas 
 #width=60 means the rolling window acounts for 60 periods.
 #intercept=True means alpha is allowed.
-apply.rolling(cs_excess[,1,drop=FALSE], width=60)
+runs_Adecco<-roll::roll_lm(x=SMI_TotRet_mon$SMI.Total.Return-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
+                           y=SMI_TotRet_mon$Adecco-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
+                           width=60,intercept = TRUE)
 
+#extract beta time series from the previous time series
+beta_ts_Adecco<-runs_Adecco$coefficients[,2]
+
+#fit a regression of the betas of last 59 periods on the betas of previous 59 periods
+beta_hat_Adecco<-lm(beta_ts_Adecco[296:355,1]~beta_ts_Adecco[295:354,1],na.action=na.omit)
+result_beta_hat_Adecco<- summary(beta_hat_Adecco)
+result_beta_hat_Adecco
+
+#estimate the alpha hat and beta hat for forecasting beta
+print(alpha_hat_Adecco<-result_beta_hat_Adecco$coefficients[1,1])
+print(beta_hat_Adecco<-result_beta_hat_Adecco$coefficients[2,1])
+
+#calculate the forecasted beta
+predicted_beta_Adecco <- as.numeric(result_beta_hat_Adecco$coefficients[1,1]+result_beta_hat_Adecco$coefficients[2,1]*beta_ts_Adecco[355,1])
+print(predicted_beta_Adecco)
+
+
+#Credit Suisse
+runs_CreditSuisse<-roll::roll_lm(x=SMI_TotRet_mon$SMI.Total.Return-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
+                                 y=SMI_TotRet_mon$Credit_Suisse_Group-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
+                                 width=60,intercept = TRUE)
+beta_ts_CreditSuisse<-runs_CreditSuisse$coefficients[,2]
+beta_hat_CreditSuisse<-lm(beta_ts_CreditSuisse[296:355,1]~beta_ts_CreditSuisse[295:354,1])
+result_beta_hat_CreditSuisse<- summary(beta_hat_CreditSuisse)
+result_beta_hat_CreditSuisse
+
+predicted_beta_CreditSuisse <- as.numeric(result_beta_hat_CreditSuisse$coefficients[1,1]+result_beta_hat_CreditSuisse$coefficients[2,1]*beta_ts_CreditSuisse[355,1])
+print(alpha_hat_CreditSuisse<-result_beta_hat_CreditSuisse$coefficients[1,1])
+print(beta_hat_CreditSuisse<-result_beta_hat_CreditSuisse$coefficients[2,1])
+print(predicted_beta_CreditSuisse)
 
 ###### 2.
 
