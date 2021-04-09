@@ -160,7 +160,7 @@ comparison_betas <- rbind(comparison_betas,abs(comparison_betas[1,]-comparison_b
 # Credit Suisse
 cs_rolling <- returns$Credit_Suisse_Group['1994-02-28/2021-02-26']
 market_rolling_cs <- SMI_TotRet_mon$SMI.Total.Return['1994-02-28/2021-02-26']
-riskfree <- interest_rates_mon$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['1994-02-28/2021-02-26']
+riskfree <- interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['1994-02-28/2021-02-26']
 
 # present beta
 rolling_beta_cs <- rollapplyr(data = cs_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_cs, Rf = riskfree, by = 1, align = "right", by.column = TRUE)
@@ -182,7 +182,7 @@ sprintf("beta hat: %f", model_cs$coefficients[2])
 # Adecco
 ad_rolling <- returns$Adecco['1988-07-29/2021-02-26']
 market_rolling_ad <- SMI_TotRet_mon$SMI.Total.Return['1988-07-29/2021-02-26']
-riskfree_ad <- interest_rates_mon$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['1988-07-29/2021-02-26']
+riskfree_ad <- interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['1988-07-29/2021-02-26']
 rolling_beta_ad <- rollapplyr(data = ad_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_ad, Rf = riskfree_ad, by = 1, align = "right", by.column = TRUE)
 rolling_beta_lag_ad <- lag.xts(rolling_beta_ad)
 rollbeta_merged_ad <- merge(rolling_beta_ad, rolling_beta_lag_ad)
@@ -197,7 +197,7 @@ sprintf("beta hat: %f", model_ad$coefficients[2])
 # Lafarge Holcim
 lh_rolling <- returns$LafargeHolcim['2001-06-29/2021-02-26']
 market_rolling_lh <- SMI_TotRet_mon$SMI.Total.Return['2001-06-29/2021-02-26']
-riskfree_lh <- interest_rates_mon$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2001-06-29/2021-02-26']
+riskfree_lh <- interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['2001-06-29/2021-02-26']
 rolling_beta_lh <- rollapplyr(data = lh_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_lh, Rf = riskfree_lh, by = 1, align = "right", by.column = TRUE)
 rolling_beta_lag_lh <- lag.xts(rolling_beta_lh)
 rollbeta_merged_lh <- merge(rolling_beta_lh, rolling_beta_lag_lh)
@@ -212,7 +212,7 @@ sprintf("beta hat: %f", model_lh$coefficients[2])
 # Swisscom
 sc_rolling <- returns$Swisscom['1998-11-30/2021-02-26']
 market_rolling_sc <- SMI_TotRet_mon$SMI.Total.Return['1998-11-30/2021-02-26']
-riskfree_sc <- interest_rates_mon$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['1998-11-30/2021-02-26']
+riskfree_sc <- interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['1998-11-30/2021-02-26']
 rolling_beta_sc <- rollapplyr(data = sc_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_sc, Rf = riskfree_sc, by = 1, align = "right", by.column = TRUE)
 rolling_beta_lag_sc <- lag.xts(rolling_beta_sc)
 rollbeta_merged_sc <- merge(rolling_beta_sc, rolling_beta_lag_sc)
