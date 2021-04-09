@@ -141,9 +141,12 @@ AF_betas <- data.table(Adecco = (result_adecco$coefficients[2,1]*2/3+1/3),
 date <- as.Date(betas[,1])
 betas.ts <- xts(x = betas[,-1], order.by = date)
 
-mean(betas.ts$Adecco['2007-07-02/2009-03-31'])
-
-returns$Credit_Suisse_Group['2016-03-31/2021-02-26']
+# make table with previously calculated betas and add the new time period
+comparison_betas <- data.table(Adecco = c(result_adecco$coefficients[2,1], mean(betas.ts$Adecco['2007-07-02/2009-03-31'])),
+                       Credit_Suisse = c(result_cs$coefficients[2,1], mean(betas.ts$Credit_Suisse_Group['2007-07-02/2009-03-31'])),
+                       LafargeHolcim = c(result_lafarge$coefficients[2,1], mean(betas.ts$LafargeHolcim['2007-07-02/2009-03-31'])),
+                       Swisscom = c(result_swisscom$coefficients[2,1], mean(betas.ts$Swisscom['2007-07-02/2009-03-31'])))
+rownames(comparison_betas) <- c("31.03.2016-26.02.2021", "02.07.2007-31.03.2009")
 
 
 
