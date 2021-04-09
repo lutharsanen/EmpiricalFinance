@@ -157,43 +157,73 @@ comparison_betas <- rbind(comparison_betas,abs(comparison_betas[1,]-comparison_b
 
 ###### 1.
 
-#use the function roll::roll_lm of "roll" package to compute rolling window betas 
-#width=60 means the rolling window acounts for 60 periods.
-#intercept=True means alpha is allowed.
-runs_Adecco<-roll::roll_lm(x=SMI_TotRet_mon$SMI.Total.Return-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
-                           y=SMI_TotRet_mon$Adecco-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
-                           width=60,intercept = TRUE)
+# Credit Suisse
+cs_rolling <- returns$Credit_Suisse_Group['1994-02-28/2021-02-26']
+market_rolling_cs <- SMI_TotRet_mon$SMI.Total.Return['1994-02-28/2021-02-26']
+riskfree <- interest_rates_mon$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['1994-02-28/2021-02-26']
 
-#extract beta time series from the previous time series
-beta_ts_Adecco<-runs_Adecco$coefficients[,2]
+# present beta
+rolling_beta_cs <- rollapplyr(data = cs_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_cs, Rf = riskfree, by = 1, align = "right", by.column = TRUE)
 
-#fit a regression of the betas of last 59 periods on the betas of previous 59 periods
-beta_hat_Adecco<-lm(beta_ts_Adecco[296:355,1]~beta_ts_Adecco[295:354,1],na.action=na.omit)
-result_beta_hat_Adecco<- summary(beta_hat_Adecco)
-result_beta_hat_Adecco
+# calculate past beta  
+rolling_beta_lag_cs <- lag.xts(rolling_beta_cs)
+rollbeta_merged_cs <- merge(rolling_beta_cs, rolling_beta_lag_cs)
 
-#estimate the alpha hat and beta hat for forecasting beta
-print(alpha_hat_Adecco<-result_beta_hat_Adecco$coefficients[1,1])
-print(beta_hat_Adecco<-result_beta_hat_Adecco$coefficients[2,1])
+# create linear model with past and present beta to determine intercept and slope
+model_cs <- lm(rollbeta_merged_cs$Credit_Suisse_Group ~ rollbeta_merged_cs$Credit_Suisse_Group.1)
+summary_cs <- summary(model_cs)
 
-#calculate the forecasted beta
-predicted_beta_Adecco <- as.numeric(result_beta_hat_Adecco$coefficients[1,1]+result_beta_hat_Adecco$coefficients[2,1]*beta_ts_Adecco[355,1])
-print(predicted_beta_Adecco)
+# calculate predicted beta of last present beta entry from CS
+predicted_betas <- model_cs$coefficients[1] + model_cs$coefficients[2] * last(rollbeta_merged_cs$Credit_Suisse_Group)
+sprintf("predicted beta: %f", predicted_betas)
+sprintf("alpha hat: %f", model_cs$coefficients[1])
+sprintf("beta hat: %f", model_cs$coefficients[2])
+
+# Adecco
+ad_rolling <- returns$Adecco['1988-07-29/2021-02-26']
+market_rolling_ad <- SMI_TotRet_mon$SMI.Total.Return['1988-07-29/2021-02-26']
+riskfree_ad <- interest_rates_mon$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['1988-07-29/2021-02-26']
+rolling_beta_ad <- rollapplyr(data = ad_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_ad, Rf = riskfree_ad, by = 1, align = "right", by.column = TRUE)
+rolling_beta_lag_ad <- lag.xts(rolling_beta_ad)
+rollbeta_merged_ad <- merge(rolling_beta_ad, rolling_beta_lag_ad)
+model_ad <- lm(rollbeta_merged_ad$Adecco ~ rollbeta_merged_ad$Adecco.1)
+summary_ad <- summary(model_ad)
+predicted_betas_ad <- model_ad$coefficients[1] + model_ad$coefficients[2] * last(rollbeta_merged_ad$Adecco)
+sprintf("predicted beta: %f", predicted_betas_ad)
+sprintf("alpha hat: %f", model_ad$coefficients[1])
+sprintf("beta hat: %f", model_ad$coefficients[2])
 
 
-#Credit Suisse
-runs_CreditSuisse<-roll::roll_lm(x=SMI_TotRet_mon$SMI.Total.Return-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
-                                 y=SMI_TotRet_mon$Credit_Suisse_Group-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
-                                 width=60,intercept = TRUE)
-beta_ts_CreditSuisse<-runs_CreditSuisse$coefficients[,2]
-beta_hat_CreditSuisse<-lm(beta_ts_CreditSuisse[296:355,1]~beta_ts_CreditSuisse[295:354,1])
-result_beta_hat_CreditSuisse<- summary(beta_hat_CreditSuisse)
-result_beta_hat_CreditSuisse
+# Lafarge Holcim
+lh_rolling <- returns$LafargeHolcim['2001-06-29/2021-02-26']
+market_rolling_lh <- SMI_TotRet_mon$SMI.Total.Return['2001-06-29/2021-02-26']
+riskfree_lh <- interest_rates_mon$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2001-06-29/2021-02-26']
+rolling_beta_lh <- rollapplyr(data = lh_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_lh, Rf = riskfree_lh, by = 1, align = "right", by.column = TRUE)
+rolling_beta_lag_lh <- lag.xts(rolling_beta_lh)
+rollbeta_merged_lh <- merge(rolling_beta_lh, rolling_beta_lag_lh)
+model_lh <- lm(rollbeta_merged_lh$LafargeHolcim ~ rollbeta_merged_lh$LafargeHolcim.1)
+summary_lh <- summary(model_lh)
+predicted_betas_lh <- model_lh$coefficients[1] + model_lh$coefficients[2] * last(rollbeta_merged_lh$LafargeHolcim)
+sprintf("predicted beta: %f", predicted_betas_lh)
+sprintf("alpha hat: %f", model_lh$coefficients[1])
+sprintf("beta hat: %f", model_lh$coefficients[2])
 
-predicted_beta_CreditSuisse <- as.numeric(result_beta_hat_CreditSuisse$coefficients[1,1]+result_beta_hat_CreditSuisse$coefficients[2,1]*beta_ts_CreditSuisse[355,1])
-print(alpha_hat_CreditSuisse<-result_beta_hat_CreditSuisse$coefficients[1,1])
-print(beta_hat_CreditSuisse<-result_beta_hat_CreditSuisse$coefficients[2,1])
-print(predicted_beta_CreditSuisse)
+
+# Swisscom
+sc_rolling <- returns$Swisscom['1998-11-30/2021-02-26']
+market_rolling_sc <- SMI_TotRet_mon$SMI.Total.Return['1998-11-30/2021-02-26']
+riskfree_sc <- interest_rates_mon$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['1998-11-30/2021-02-26']
+rolling_beta_sc <- rollapplyr(data = sc_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_sc, Rf = riskfree_sc, by = 1, align = "right", by.column = TRUE)
+rolling_beta_lag_sc <- lag.xts(rolling_beta_sc)
+rollbeta_merged_sc <- merge(rolling_beta_sc, rolling_beta_lag_sc)
+model_sc <- lm(rollbeta_merged_sc$Swisscom ~ rollbeta_merged_sc$Swisscom.1)
+summary_sc <- summary(model_sc)
+predicted_betas_sc <- model_sc$coefficients[1] + model_sc$coefficients[2] * last(rollbeta_merged_sc$Swisscom)
+sprintf("predicted beta: %f", predicted_betas_sc)
+sprintf("alpha hat: %f", model_sc$coefficients[1])
+sprintf("beta hat: %f", model_sc$coefficients[2])
+
+
 
 ###### 2.
 
