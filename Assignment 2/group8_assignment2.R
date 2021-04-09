@@ -162,6 +162,7 @@ cs_rolling <- returns$Credit_Suisse_Group['1994-02-28/2021-02-26']
 market_rolling_cs <- SMI_TotRet_mon$SMI.Total.Return['1994-02-28/2021-02-26']
 riskfree <- interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['1994-02-28/2021-02-26']
 
+
 # present beta
 rolling_beta_cs <- rollapplyr(data = cs_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_cs, Rf = riskfree, by = 1, align = "right", by.column = TRUE)
 
@@ -175,23 +176,25 @@ summary_cs <- summary(model_cs)
 
 # calculate predicted beta of last present beta entry from CS
 predicted_betas <- model_cs$coefficients[1] + model_cs$coefficients[2] * last(rollbeta_merged_cs$Credit_Suisse_Group)
-sprintf("predicted beta: %f", predicted_betas)
-sprintf("alpha hat: %f", model_cs$coefficients[1])
-sprintf("beta hat: %f", model_cs$coefficients[2])
+sprintf("forecast beta: %f", predicted_betas)
+sprintf("beta: %f", last(rollbeta_merged_cs$Credit_Suisse_Group))
+sprintf("a hat: %f", model_cs$coefficients[1])
+sprintf("b hat: %f", model_cs$coefficients[2])
 
 # Adecco
-ad_rolling <- returns$Adecco['1988-07-29/2021-02-26']
-market_rolling_ad <- SMI_TotRet_mon$SMI.Total.Return['1988-07-29/2021-02-26']
-riskfree_ad <- interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['1988-07-29/2021-02-26']
+ad_rolling <- returns$Adecco['1999-08-31/2020-08-31']
+market_rolling_ad <- SMI_TotRet_mon$SMI.Total.Return['1999-08-31/2020-08-31']
+riskfree_ad <- interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['1988-07-29/2020-08-31']
 rolling_beta_ad <- rollapplyr(data = ad_rolling, width = 60, FUN = CAPM.beta, Rb = market_rolling_ad, Rf = riskfree_ad, by = 1, align = "right", by.column = TRUE)
 rolling_beta_lag_ad <- lag.xts(rolling_beta_ad)
 rollbeta_merged_ad <- merge(rolling_beta_ad, rolling_beta_lag_ad)
 model_ad <- lm(rollbeta_merged_ad$Adecco ~ rollbeta_merged_ad$Adecco.1)
 summary_ad <- summary(model_ad)
 predicted_betas_ad <- model_ad$coefficients[1] + model_ad$coefficients[2] * last(rollbeta_merged_ad$Adecco)
-sprintf("predicted beta: %f", predicted_betas_ad)
-sprintf("alpha hat: %f", model_ad$coefficients[1])
-sprintf("beta hat: %f", model_ad$coefficients[2])
+sprintf("forecast beta: %f", predicted_betas_ad)
+sprintf("beta: %f", last(rollbeta_merged_ad$Adecco))
+sprintf("a hat: %f", model_ad$coefficients[1])
+sprintf("b hat: %f", model_ad$coefficients[2])
 
 
 # Lafarge Holcim
@@ -204,9 +207,10 @@ rollbeta_merged_lh <- merge(rolling_beta_lh, rolling_beta_lag_lh)
 model_lh <- lm(rollbeta_merged_lh$LafargeHolcim ~ rollbeta_merged_lh$LafargeHolcim.1)
 summary_lh <- summary(model_lh)
 predicted_betas_lh <- model_lh$coefficients[1] + model_lh$coefficients[2] * last(rollbeta_merged_lh$LafargeHolcim)
-sprintf("predicted beta: %f", predicted_betas_lh)
-sprintf("alpha hat: %f", model_lh$coefficients[1])
-sprintf("beta hat: %f", model_lh$coefficients[2])
+sprintf("forecast beta: %f", predicted_betas_lh)
+sprintf("beta: %f", last(rollbeta_merged_lh$LafargeHolcim))
+sprintf("a hat: %f", model_lh$coefficients[1])
+sprintf("b hat: %f", model_lh$coefficients[2])
 
 
 # Swisscom
@@ -219,9 +223,10 @@ rollbeta_merged_sc <- merge(rolling_beta_sc, rolling_beta_lag_sc)
 model_sc <- lm(rollbeta_merged_sc$Swisscom ~ rollbeta_merged_sc$Swisscom.1)
 summary_sc <- summary(model_sc)
 predicted_betas_sc <- model_sc$coefficients[1] + model_sc$coefficients[2] * last(rollbeta_merged_sc$Swisscom)
-sprintf("predicted beta: %f", predicted_betas_sc)
-sprintf("alpha hat: %f", model_sc$coefficients[1])
-sprintf("beta hat: %f", model_sc$coefficients[2])
+sprintf("forecast beta: %f", predicted_betas_sc)
+sprintf("beta: %f", last(rollbeta_merged_sc$Swisscom))
+sprintf("a hat: %f", model_sc$coefficients[1])
+sprintf("b hat: %f", model_sc$coefficients[2])
 
 
 
