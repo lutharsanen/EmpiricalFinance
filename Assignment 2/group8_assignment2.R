@@ -1,16 +1,16 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 1")
-# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 2")
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 2")
 
 ############
 # Packages #
 ############
-# uncomment the three following lines to install the packages
- install.packages("xts")
- install.packages("PerformanceAnalytics")
- install.packages("psych")
- install.packages("roll")
- install.packages("data.table")
+# uncomment the following lines to install the packages
+ # install.packages("xts")
+ # install.packages("PerformanceAnalytics")
+ # install.packages("psych")
+ # install.packages("roll")
+ # install.packages("data.table")
 ###########
 
 # load libraries
@@ -39,9 +39,9 @@ returns <- Return.calculate(prices = prices.ts, method = 'discrete')
 SMI_monthly <- xts(SMI_monthly[,-1], order.by = as.Date(SMI_monthly$Date))
 SMI_TotRet_mon <- Return.calculate(SMI_monthly)
 
-# turn interest_rates into ts and divide by 100 because it is in percentages
+# turn interest_rates into ts and divide by 100 because it is in percentages and turn into monthly rates
 interest_rates <- xts(interest_rates[,-1], order.by = as.Date(interest_rates$Date))
-interest_rates <- interest_rates/100
+interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
 
 
 #################
@@ -61,9 +61,9 @@ interest_rates <- interest_rates/100
 ####### 3.
 
 # make regression for beta and other parameters for the four companies(first calculate SMI excess return and the same for each stock)
-SMI_excess <- SMI_TotRet_mon$SMI.Total.Return['2016-03-31/2021-02-26'] - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-02-26']
+SMI_excess <- SMI_TotRet_mon$SMI.Total.Return['2016-03-31/2021-02-26'] - interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['2016-03-31/2021-02-26']
 
-adecco_excess <- returns$Adecco['2016-03-31/2021-02-26'] - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-02-26']
+adecco_excess <- returns$Adecco['2016-03-31/2021-02-26'] - interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['2016-03-31/2021-02-26']
 fit_adecco <- lm(adecco_excess ~SMI_excess)
 result_adecco <- summary(fit_adecco)
 
@@ -74,7 +74,7 @@ row_adecco <- c(result_adecco$coefficients[2,1],
                 result_adecco$coefficients[2,2],
                 result_adecco$coefficients[1,2])
 
-cs_excess <- returns$Credit_Suisse_Group['2016-03-31/2021-02-26'] - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-02-26']
+cs_excess <- returns$Credit_Suisse_Group['2016-03-31/2021-02-26'] - interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['2016-03-31/2021-02-26']
 fit_cs <- lm(cs_excess ~SMI_excess)
 result_cs<- summary(fit_cs)
 
@@ -85,7 +85,7 @@ row_cs <- c(result_cs$coefficients[2,1],
                 result_cs$coefficients[2,2],
                 result_cs$coefficients[1,2])
 
-lafarge_excess <- returns$LafargeHolcim['2016-03-31/2021-02-26'] - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-02-26']
+lafarge_excess <- returns$LafargeHolcim['2016-03-31/2021-02-26'] - interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['2016-03-31/2021-02-26']
 fit_lafarge <- lm(lafarge_excess ~SMI_excess)
 result_lafarge<- summary(fit_lafarge)
 
@@ -96,7 +96,7 @@ row_lafarge <- c(result_lafarge$coefficients[2,1],
                 result_lafarge$coefficients[2,2],
                 result_lafarge$coefficients[1,2])
 
-swisscom_excess <- returns$Swisscom['2016-03-31/2021-02-26'] - interest_rates$SWISS.CONFEDERATION.BOND.5.YEAR...RED..YIELD['2016-03-31/2021-02-26']
+swisscom_excess <- returns$Swisscom['2016-03-31/2021-02-26'] - interest_rates_mon$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD['2016-03-31/2021-02-26']
 fit_swisscom <- lm(swisscom_excess ~SMI_excess)
 result_swisscom<- summary(fit_swisscom)
 
