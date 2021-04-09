@@ -146,7 +146,8 @@ comparison_betas <- data.table(Adecco = c(result_adecco$coefficients[2,1], mean(
                        Credit_Suisse = c(result_cs$coefficients[2,1], mean(betas.ts$Credit_Suisse_Group['2007-07-02/2009-03-31'])),
                        LafargeHolcim = c(result_lafarge$coefficients[2,1], mean(betas.ts$LafargeHolcim['2007-07-02/2009-03-31'])),
                        Swisscom = c(result_swisscom$coefficients[2,1], mean(betas.ts$Swisscom['2007-07-02/2009-03-31'])))
-rownames(comparison_betas) <- c("31.03.2016-26.02.2021", "02.07.2007-31.03.2009")
+# add row with absolute difference
+comparison_betas <- rbind(comparison_betas,abs(comparison_betas[1,]-comparison_betas[2,]))
 
 
 

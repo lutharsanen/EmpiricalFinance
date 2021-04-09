@@ -174,22 +174,6 @@ You can also embed plots, for example:
 ##     legend
 \end{verbatim}
 
-\begin{longtable}[]{@{}lrrrrrr@{}}
-\toprule
-& Beta & Alpha & R2 & Res. SD & SE Beta & SE Alpha\tabularnewline
-\midrule
-\endhead
-Adecco & 1.5832 & -0.0185 & 0.3457 & 0.0650 & 0.3050 &
-0.0100\tabularnewline
-Credit Suisse & 2.0448 & -0.0235 & 0.4204 & 0.0776 & 0.3238 &
-0.0115\tabularnewline
-LafargeHolcim & 1.6685 & -0.0140 & 0.4449 & 0.0602 & 0.2513 &
-0.0089\tabularnewline
-Swisscom & 0.3260 & 0.0020 & 0.0923 & 0.0330 & 0.1378 &
-0.0049\tabularnewline
-\bottomrule
-\end{longtable}
-
 \begin{verbatim}
 ## 
 ## Attaching package: 'data.table'
@@ -201,12 +185,19 @@ Swisscom & 0.3260 & 0.0020 & 0.0923 & 0.0330 & 0.1378 &
 ##     first, last
 \end{verbatim}
 
-\begin{longtable}[]{@{}rrrr@{}}
+\begin{longtable}[]{@{}lrrrrrr@{}}
 \toprule
-Adecco & Credit\_Suisse & LafargeHolcim & Swisscom\tabularnewline
+& Beta & Alpha & R2 & Res. SD & SE Beta & SE Alpha\tabularnewline
 \midrule
 \endhead
-5.190545 & 6.315758 & 6.639289 & 2.365453\tabularnewline
+Adecco & 1.5697 & -0.0148 & 0.3431 & 0.0651 & 0.3042 &
+0.0093\tabularnewline
+Credit Suisse & 2.0432 & -0.0170 & 0.4220 & 0.0776 & 0.3224 &
+0.0107\tabularnewline
+LafargeHolcim & 1.6505 & -0.0097 & 0.4400 & 0.0604 & 0.2511 &
+0.0083\tabularnewline
+Swisscom & 0.3286 & -0.0022 & 0.0943 & 0.0330 & 0.1373 &
+0.0046\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -215,7 +206,27 @@ Adecco & Credit\_Suisse & LafargeHolcim & Swisscom\tabularnewline
 Adecco & Credit\_Suisse & LafargeHolcim & Swisscom\tabularnewline
 \midrule
 \endhead
-1.388773 & 1.696522 & 1.445646 & 0.5506448\tabularnewline
+5.160657 & 6.3374 & 6.573219 & 2.393539\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}rrrr@{}}
+\toprule
+Adecco & Credit\_Suisse & LafargeHolcim & Swisscom\tabularnewline
+\midrule
+\endhead
+1.379821 & 1.69547 & 1.433671 & 0.5524165\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}rrrr@{}}
+\toprule
+Adecco & Credit\_Suisse & LafargeHolcim & Swisscom\tabularnewline
+\midrule
+\endhead
+1.5697314 & 2.0432055 & 1.6505065 & 0.3286247\tabularnewline
+1.0415467 & 1.5273960 & 1.0778196 & 0.5538494\tabularnewline
+0.5281847 & 0.5158095 & 0.5726869 & 0.2252247\tabularnewline
 \bottomrule
 \end{longtable}
 
