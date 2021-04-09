@@ -1,15 +1,16 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 1")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 2")
+# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 2")
 
 ############
 # Packages #
 ############
 # uncomment the three following lines to install the packages
-# install.packages("xts")
-# install.packages("PerformanceAnalytics")
-# install.packages("psych")
-# install.packages("roll")
+ install.packages("xts")
+ install.packages("PerformanceAnalytics")
+ install.packages("psych")
+ install.packages("roll")
+ install.packages("data.table")
 ###########
 
 # load libraries
@@ -152,10 +153,47 @@ returns$Credit_Suisse_Group['2016-03-31/2021-02-26']
 
 ###### 1.
 
+#use the function roll::roll_lm of "roll" package to compute rolling window betas 
+#width=60 means the rolling window acounts for 60 periods.
+#intercept=True means alpha is allowed.
+runs_Adecco<-roll::roll_lm(x=SMI_TotRet_mon$SMI.Total.Return-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
+                           y=SMI_TotRet_mon$Adecco-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
+                           width=60,intercept = TRUE)
+
+#extract beta time series from the previous time series
+beta_ts_Adecco<-runs_Adecco$coefficients[,2]
+
+#fit a regression of the betas of last 59 periods on the betas of previous 59 periods
+beta_hat_Adecco<-lm(beta_ts_Adecco[296:355,1]~beta_ts_Adecco[295:354,1],na.action=na.omit)
+result_beta_hat_Adecco<- summary(beta_hat_Adecco)
+result_beta_hat_Adecco
+
+#estimate the alpha hat and beta hat for forecasting beta
+print(alpha_hat_Adecco<-result_beta_hat_Adecco$coefficients[1,1])
+print(beta_hat_Adecco<-result_beta_hat_Adecco$coefficients[2,1])
+
+#calculate the forecasted beta
+predicted_beta_Adecco <- as.numeric(result_beta_hat_Adecco$coefficients[1,1]+result_beta_hat_Adecco$coefficients[2,1]*beta_ts_Adecco[355,1])
+print(predicted_beta_Adecco)
+
+
+#Credit Suisse
+runs_CreditSuisse<-roll::roll_lm(x=SMI_TotRet_mon$SMI.Total.Return-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
+                                 y=SMI_TotRet_mon$Credit_Suisse_Group-interest_rates$SWISS.CONFEDERATION.BOND.1.YEAR...RED..YIELD,
+                                 width=60,intercept = TRUE)
+beta_ts_CreditSuisse<-runs_CreditSuisse$coefficients[,2]
+beta_hat_CreditSuisse<-lm(beta_ts_CreditSuisse[296:355,1]~beta_ts_CreditSuisse[295:354,1])
+result_beta_hat_CreditSuisse<- summary(beta_hat_CreditSuisse)
+result_beta_hat_CreditSuisse
+
+predicted_beta_CreditSuisse <- as.numeric(result_beta_hat_CreditSuisse$coefficients[1,1]+result_beta_hat_CreditSuisse$coefficients[2,1]*beta_ts_CreditSuisse[355,1])
+print(alpha_hat_CreditSuisse<-result_beta_hat_CreditSuisse$coefficients[1,1])
+print(beta_hat_CreditSuisse<-result_beta_hat_CreditSuisse$coefficients[2,1])
+print(predicted_beta_CreditSuisse)
 
 ###### 2.
 
-
+#no code required
 
 #################
 ###  Ex 5.3  ###
@@ -163,7 +201,7 @@ returns$Credit_Suisse_Group['2016-03-31/2021-02-26']
 
 prices_daily <- A2_dataset_04
 #View(prices_daily)
-betas <- A2_dataset_05
+#betas <- A2_dataset_05
 #View(betas)
 
 
@@ -184,7 +222,7 @@ returns_daily.ts <- as.matrix(returns_daily['1994-04-30/2017-12-29'])
 # View(returns_daily.ts)
 
 daily_betas.ts <- as.matrix(betas.ts['1994-04-29/2017-12-28'])
-# View(daily_betas.ts)
+View(daily_betas.ts)
 
 
 # create empty vectors for loop
@@ -198,8 +236,7 @@ Returns_P5_daily <- as.matrix(rep(NA,dim(daily_betas.ts)[1]))
 for (j in 1:dim(daily_betas.ts)[1])
 {
   
-  Subset_daily <- daily_betas.ts[j,]
-  
+  Subset_daily <- daily_betas.ts[j,] #for each day so every row j
   
   
   P1_P_daily <- subset(Subset_daily,subset = Subset_daily < quantile(Subset_daily , c(0.2),na.rm=TRUE))
@@ -219,21 +256,39 @@ for (j in 1:dim(daily_betas.ts)[1])
 
 # Mean returns
 
-print(mean_Return_P1<-mean(Returns_P1_daily,na.rm=TRUE))
-print(mean_Return_P2<-mean(Returns_P2_daily,na.rm=TRUE))
-print(mean_Return_P3<-mean(Returns_P3_daily,na.rm=TRUE))
-print(mean_Return_P4<-mean(Returns_P4_daily,na.rm=TRUE))
-print(mean_Return_P5<-mean(Returns_P5_daily,na.rm=TRUE))
+mean_return1 <- (mean(Returns_P1_daily,na.rm=TRUE))
+mean_return2 <- (mean(Returns_P2_daily,na.rm=TRUE))
+mean_return3 <- (mean(Returns_P3_daily,na.rm=TRUE))
+mean_return4 <- (mean(Returns_P4_daily,na.rm=TRUE))
+mean_return5 <- (mean(Returns_P5_daily,na.rm=TRUE))
+
+round(mean_return1, digits=6)
+round(mean_return2, digits=6)
+round(mean_return3, digits=6)
+round(mean_return4, digits=6)
+round(mean_return5, digits=6)
+
 
 # Mean standard deviations of the portfolios
-print(SD_P1<-sd(Returns_P1_daily,na.rm=TRUE))
-print(SD_P2<-sd(Returns_P2_daily,na.rm=TRUE))
-print(SD_P3<-sd(Returns_P3_daily,na.rm=TRUE))
-print(SD_P4<-sd(Returns_P4_daily,na.rm=TRUE))
-print(SD_P5<-sd(Returns_P5_daily,na.rm=TRUE))
+
+sd_return1 <- (sd(Returns_P1_daily,na.rm=TRUE))
+sd_return2 <- (sd(Returns_P2_daily,na.rm=TRUE))
+sd_return3 <- (sd(Returns_P3_daily,na.rm=TRUE))
+sd_return4 <- (sd(Returns_P4_daily,na.rm=TRUE))
+sd_return5 <- (sd(Returns_P5_daily,na.rm=TRUE))
+
+round(sd_return1, digits=6)
+round(sd_return2, digits=6)
+round(sd_return3, digits=6)
+round(sd_return4, digits=6)
+round(sd_return5, digits=6)
 
 
 ###### 2.
+
+
+date_daily2 <- date_2[2:6176]
+View(date_daily2)
 
 # plot results
 
@@ -243,20 +298,14 @@ cumulative_returns_p3_daily <- cumprod(1+Returns_P3_daily)
 cumulative_returns_p4_daily <- cumprod(1+Returns_P4_daily)
 cumulative_returns_p5_daily <- cumprod(1+Returns_P5_daily)
 
-plot(x=date_2[2:6176], y=cumulative_returns_p1_daily, ylim=c(0,18),type= "l", lty = 1, lwd = 3, col = "turquoise", cex.axis = 1, cex.lab = 1, ylab = "Cumulative Return", xlab = "Time")
-lines(date_2[2:6176], cumulative_returns_p2_daily, lty = 1, lwd = 3, col = "blue4")
-lines(date_2[2:6176], cumulative_returns_p3_daily, lty = 1, lwd = 2, col = "cadetblue")
-lines(date_2[2:6176], cumulative_returns_p4_daily, lty = 1, lwd = 2, col = "darkorchid")
-lines(date_2[2:6176], cumulative_returns_p5_daily, lty = 1, lwd = 2, col = "green4")
+plot(x=date_daily2, y=cumulative_returns_p1_daily, ylim=c(0,18),type= "l", lty = 1, lwd = 3, col = "turquoise", cex.axis = 1, cex.lab = 1, ylab = "Cumulative Return", xlab = "Time")
+lines(date_daily2, cumulative_returns_p2_daily, lty = 1, lwd = 3, col = "blue4")
+lines(date_daily2, cumulative_returns_p3_daily, lty = 1, lwd = 2, col = "cadetblue")
+lines(date_daily2, cumulative_returns_p4_daily, lty = 1, lwd = 2, col = "darkorchid")
+lines(date_daily2, cumulative_returns_p5_daily, lty = 1, lwd = 2, col = "green4")
 
 legend("topleft", c("Portfolio 1", "Portfolio 2", "Portfolio 3", "Portfolio 4", "Portfolio 5"), 
        lty = c(1,1,1,1,1), lwd = 3, bty = "n",cex = 1.2, col = c("turquoise", "blue4", "cadetblue","darkorchid","green4"))
-
-
-
-
-
-
 
 
 
