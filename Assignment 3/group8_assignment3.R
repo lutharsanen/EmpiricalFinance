@@ -27,23 +27,23 @@ library(data.table)
 ###############
 prices <- read.delim(file = 'A3_dataset_01.txt', header = TRUE, sep = '\t', dec = '.')
 SMI_monthly <- read.delim(file = 'A3_dataset_02.txt', header = TRUE, sep = '\t', dec = '.')
-interest_rates <- read.delim(file = 'A2_dataset_03.txt', header = TRUE, sep = '\t', dec = '.')
+interest_rates <- read.delim(file = 'A3_dataset_03.txt', header = TRUE, sep = '\t', dec = '.')
+
 
 # # create monthly returns for stocks and SMI
 date <- as.Date(prices[,1], format = "%d.%m.%Y")
 prices.ts <- xts(x = prices[,-1], order.by = date)
 #View(prices.ts)
-returns <- Return.calculate(prices = prices.ts, method = 'discrete')
+returns <- Return.calculate(prices = prices.ts, method = 'log')
 # 
 SMI_monthly <- xts(SMI_monthly[,-1], order.by = as.Date(SMI_monthly$Date, format = "%d.%m.%Y"))
 #View(SMI_monthly)
-SMI_TotRet_mon <- Return.calculate(SMI_monthly)
+SMI_TotRet_mon <- Return.calculate(SMI_monthly, method = "log")
 # 
 # # turn interest_rates into ts and divide by 100 because it is in percentages and turn into monthly rates
 interest_rates <- xts(interest_rates[,-1], order.by = as.Date(interest_rates$Date,  format = "%d.%m.%Y"))
 #View(interest_rates)
 interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
-
 
 #################
 ###  Ex 5.1  ###
@@ -51,12 +51,17 @@ interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
 
 ####### 1.
 
+# calculating excess returns by subtracting riskfree from returns 
+excess_return <- Return.excess(returns, interest_rates_mon)
 
-
+# calculate market premium by subtracting risk-free returns from market return
+market_premium <- Return.excess(SMI_TotRet_mon, interest_rates_mon)
 
 ####### 2.
 
 
+#regress excess return over
+lm(Return.excess() ~ )
 
 ####### 3.
 
