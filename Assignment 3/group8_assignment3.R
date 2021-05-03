@@ -51,7 +51,7 @@ interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
 
 ####### 1.
 
-# calculating excess returns by subtracting riskfree from returns 
+# calculating excess returns by subtracting risk-free from returns 
 excess_return <- Return.excess(returns, interest_rates_mon)
 
 # calculate market premium by subtracting risk-free returns from market return
@@ -61,7 +61,7 @@ market_premium <- Return.excess(SMI_TotRet_mon, interest_rates_mon)
 
 
 #regress excess return over
-lm(Return.excess() ~ )
+lm(excess_return ~ market_premium)
 
 ####### 3.
 
