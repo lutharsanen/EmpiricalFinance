@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 3")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
+# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
 
 ############
 # Packages #
@@ -30,16 +30,19 @@ SMI_monthly <- read.delim(file = 'A3_dataset_02.txt', header = TRUE, sep = '\t',
 interest_rates <- read.delim(file = 'A2_dataset_03.txt', header = TRUE, sep = '\t', dec = '.')
 
 # # create monthly returns for stocks and SMI
-# date <- as.Date(prices_monthly[,1])
-# prices.ts <- xts(x = prices_monthly[,-1], order.by = date)
-# returns <- Return.calculate(prices = prices.ts, method = 'discrete')
+date <- as.Date(prices[,1], format = "%d.%m.%Y")
+prices.ts <- xts(x = prices[,-1], order.by = date)
+#View(prices.ts)
+returns <- Return.calculate(prices = prices.ts, method = 'discrete')
 # 
-# SMI_monthly <- xts(SMI_monthly[,-1], order.by = as.Date(SMI_monthly$Date))
-# SMI_TotRet_mon <- Return.calculate(SMI_monthly)
+SMI_monthly <- xts(SMI_monthly[,-1], order.by = as.Date(SMI_monthly$Date, format = "%d.%m.%Y"))
+#View(SMI_monthly)
+SMI_TotRet_mon <- Return.calculate(SMI_monthly)
 # 
 # # turn interest_rates into ts and divide by 100 because it is in percentages and turn into monthly rates
-# interest_rates <- xts(interest_rates[,-1], order.by = as.Date(interest_rates$Date))
-# interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
+interest_rates <- xts(interest_rates[,-1], order.by = as.Date(interest_rates$Date,  format = "%d.%m.%Y"))
+#View(interest_rates)
+interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
 
 
 #################
