@@ -19,7 +19,7 @@ library(PerformanceAnalytics)
 library(psych)
 library(roll)
 library(data.table)
-
+library(ggplot2)
 
 
 ###############
@@ -123,7 +123,18 @@ low5beta <- head(beta_ordered, 5)
 
 ####### 6.
 
+dat <- data.frame(
+        return = excess_return$`Zurich_Insurance_Group_N > Rf`,
+        market = market_premium
+)
 
+names(dat)[1]<-paste("ZurichInsurance")
+names(dat)[2]<-paste("marketpremium")
+
+ggplot(dat, aes(x=ZurichInsurance, y=market_premium)) +
+        geom_point(shape=1) +
+        geom_smooth(method=lm,   # Add linear regression line
+                    se=FALSE)
 
 
 #################
