@@ -57,18 +57,65 @@ excess_return <- Return.excess(returns, interest_rates_mon)
 # calculate market premium by subtracting risk-free returns from market return
 market_premium <- Return.excess(SMI_TotRet_mon, interest_rates_mon)
 
+
 ####### 2.
 
+lin_reg_values <- data.frame(
+        company_name = character(),
+        alpha = double(),
+        alpha_t_value = double(),
+        beta=double(),
+        beta_t_value = double())
 
-#regress excess return over
-lm(excess_return ~ market_premium)
+# regress excess return over
+
+for(i in 1:ncol(excess_return)){
+        beta_regression <- summary(lm(excess_return[,i] ~ market_premium))
+        company_name <- colnames(excess_return[,i])
+        parsed_name <- gsub('.{5}$', '', company_name)
+        new_row <- c(company_name = parsed_name, 
+                     alpha = beta_regression$coefficients[1,1],
+                     alpha_t_value = beta_regression$coefficients[1,2],
+                     beta = beta_regression$coefficients[2,1],
+                     beta_t_value = beta_regression$coefficients[2,2]
+                     )
+        lin_reg_values<- rbind(lin_reg_values, new_row) 
+}
+
+
+names(lin_reg_values)[1]<-paste("company_name")
+names(lin_reg_values)[2]<-paste("alpha")
+names(lin_reg_values)[3]<-paste("alpha_t_value")
+names(lin_reg_values)[4]<-paste("beta")
+names(lin_reg_values)[5]<-paste("beta_t_value")
+
 
 ####### 3.
 
+mean_values <- data.frame(
+        company_name = character(),
+        mean = double())
 
+for(i in 1:ncol(excess_return)){
+        company_name <- colnames(excess_return[,i])
+        parsed_name <- gsub('.{5}$', '', company_name)
+        new_row <- c(company_name = parsed_name, 
+                     mean = mean(excess_return[,i], na.rm = TRUE)
+        )
+        mean_values<- rbind(mean_values, new_row) 
+
+}
+
+names(mean_values)[1]<-paste("company_name")
+names(mean_values)[2]<-paste("mean")
 
 ####### 4.
 
+beta_ordered <- lin_reg_values[order(lin_reg_values$beta),]
+
+top5beta <- tail(beta_ordered, 5)
+
+low5beta <- head(beta_ordered, 5)
 
 ####### 5.
 
