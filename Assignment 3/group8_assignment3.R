@@ -141,13 +141,34 @@ ggplot(dat, aes(x=ZurichInsurance, y=market_premium)) +
 ###  Ex 5.2  ###
 #################
 
+
 ###### 1.
+
+new_data <- cbind(lin_reg_values,mean_values)
+View(new_data)
+as.numeric(new_data$mean)
+new_data$ann_returns <- new_data$mean  * 5
+plot(as.numeric(new_data$beta), as.numeric(new_data$mean), main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return")
 
 
 
 
 ###### 2.
+str(new_data)
+new_data$beta <- as.numeric(new_data$beta)
+new_data$mean <- as.numeric(new_data$mean)
+new_data$mean <- as.numeric(new_data$alpha)
+new_data$mean <- as.numeric(new_data$alpha_t_value)
+new_data$mean <- as.numeric(new_data$beta_t_value)
 
+
+cross_section <- lm(new_data$mean ~ new_data$beta)
+summary(cross_section)
+
+#sample mean excess return:
+View(new_data)
+mean_excess_market_return <- colMeans(market_premium, na.rm = TRUE)
+mean_excess_market_return #???
 
 ###### 3.
 
