@@ -153,20 +153,19 @@ plot(as.numeric(new_data$beta), as.numeric(new_data$mean), main = "Beta Realized
 
 
 
-###### 2.
-str(new_data)
-new_data$beta <- as.numeric(new_data$beta)
-new_data$mean <- as.numeric(new_data$mean)
 new_data$mean <- as.numeric(new_data$alpha)
 new_data$mean <- as.numeric(new_data$alpha_t_value)
 new_data$mean <- as.numeric(new_data$beta_t_value)
 
 
+###### 2.
+
+# regress mean excess returns on betas
 cross_section <- lm(new_data$mean ~ new_data$beta)
 summary(cross_section)
 
 #sample mean excess return:
-View(new_data)
+
 mean_excess_market_return <- colMeans(market_premium, na.rm = TRUE)
 mean_excess_market_return #???
 
