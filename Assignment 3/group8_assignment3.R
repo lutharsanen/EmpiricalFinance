@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 3")
-# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
 
 ############
 # Packages #
@@ -42,8 +42,10 @@ SMI_TotRet_mon <- Return.calculate(SMI_monthly, method = "log")
 # 
 # # turn interest_rates into ts and divide by 100 because it is in percentages and turn into monthly rates
 interest_rates <- xts(interest_rates[,-1], order.by = as.Date(interest_rates$Date,  format = "%d.%m.%Y"))
-#View(interest_rates)
 interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
+
+# take logs of interest rates
+interest_rates_mon <- log(1+interest_rates_mon)
 
 #################
 ###  Ex 5.1  ###
@@ -77,7 +79,8 @@ for(i in 1:ncol(excess_return)){
                      alpha = beta_regression$coefficients[1,1],
                      alpha_t_value = beta_regression$coefficients[1,2],
                      beta = beta_regression$coefficients[2,1],
-                     beta_t_value = beta_regression$coefficients[2,2]
+                     beta_t_value = beta_regression$coefficients[2,2],
+                     res_var = var(residuals(beta_regression))
                      )
         lin_reg_values<- rbind(lin_reg_values, new_row) 
 }
@@ -88,6 +91,7 @@ names(lin_reg_values)[2]<-paste("alpha")
 names(lin_reg_values)[3]<-paste("alpha_t_value")
 names(lin_reg_values)[4]<-paste("beta")
 names(lin_reg_values)[5]<-paste("beta_t_value")
+names(lin_reg_values)[6]<-paste("res_var")
 
 
 ####### 3.
@@ -144,18 +148,28 @@ ggplot(dat, aes(x=ZurichInsurance, y=market_premium)) +
 
 ###### 1.
 
+# make data frame with regression coefficients and mean excess returns
 new_data <- cbind(lin_reg_values,mean_values)
-View(new_data)
-as.numeric(new_data$mean)
-new_data$ann_returns <- new_data$mean  * 5
-plot(as.numeric(new_data$beta), as.numeric(new_data$mean), main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return")
 
+#remove redundant column
+new_data[,7] <- NULL
 
+# convert columns to numeric values
+new_data$beta <- as.numeric(new_data$beta)
+new_data$mean <- as.numeric(new_data$mean)
+new_data$alpha <- as.numeric(new_data$alpha)
+new_data$alpha_t_value <- as.numeric(new_data$alpha_t_value)
+new_data$beta_t_value <- as.numeric(new_data$beta_t_value)
 
+# annualize mean excess return
+new_data$ann_returns <- new_data$mean*12
 
-new_data$mean <- as.numeric(new_data$alpha)
-new_data$mean <- as.numeric(new_data$alpha_t_value)
-new_data$mean <- as.numeric(new_data$beta_t_value)
+# polot beta realized return relationship
+plot(new_data$beta, new_data$ann_returns, main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return (ann.)")
+
+ggplot(new_data, aes(x=beta, y=ann_returns)) +
+        geom_point(shape=1) +
+        labs(x = "Realized Beta", y = "Mean Excess Return (ann.)", title="Beta Realized Return Relationship")
 
 
 ###### 2.
@@ -175,10 +189,23 @@ mean_excess_market_return #???
 ###### 4.
 
 
+
+# add lines to previous plot (*12 to graphically match annualized data)
+ggplot(new_data, aes(x=beta, y=ann_returns)) +
+        geom_point(shape=1) +
+        labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta Realized Return Relationship") +
+        geom_abline(slope = coef(cross_section)[[2]]*12, intercept = coef(cross_section)[[1]]*12)  +
+        geom_abline(slope = mean_excess_market_return, intercept = 0, color="red") #+
+        geom_smooth(method = "lm", se = FALSE)
+
+
 ###### 5.
+
+# no code required
 
 
 ###### 6.
+
 
 
 
