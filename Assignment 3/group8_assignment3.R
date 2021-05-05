@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 3")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
+# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
 
 ############
 # Packages #
@@ -160,6 +160,7 @@ new_data$mean <- as.numeric(new_data$mean)
 new_data$alpha <- as.numeric(new_data$alpha)
 new_data$alpha_t_value <- as.numeric(new_data$alpha_t_value)
 new_data$beta_t_value <- as.numeric(new_data$beta_t_value)
+new_data$res_var <- as.numeric(new_data$res_var)
 
 # annualize mean excess return
 new_data$ann_returns <- new_data$mean*12
@@ -181,13 +182,14 @@ summary(cross_section)
 #sample mean excess return:
 
 mean_excess_market_return <- colMeans(market_premium, na.rm = TRUE)
-mean_excess_market_return #???
+mean_excess_market_return 
 
 ###### 3.
 
+#See t-values in 5.2.2
+
 
 ###### 4.
-
 
 
 # add lines to previous plot (*12 to graphically match annualized data)
@@ -198,6 +200,14 @@ ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_abline(slope = mean_excess_market_return, intercept = 0, color="red") #+
         geom_smooth(method = "lm", se = FALSE)
 
+        
+#not annualized        
+        ggplot(new_data, aes(x=beta, y=mean)) +
+                geom_point(shape=1) +
+                labs(x = "Realized Beta", y = "Mean Excess Return", title="Beta Realized Return Relationship") +
+                geom_abline(slope = coef(cross_section)[[2]], intercept = coef(cross_section)[[1]])  +
+                geom_abline(slope = mean_excess_market_return, intercept = 0, color="red") #+
+        geom_smooth(method = "lm", se = FALSE)
 
 ###### 5.
 
@@ -205,8 +215,10 @@ ggplot(new_data, aes(x=beta, y=ann_returns)) +
 
 
 ###### 6.
-
-
+new_data$beta_sq <- new_data$beta^2
+        
+cross_section_expanded <- lm(new_data$mean ~ new_data$beta + new_data$beta_sq + new_data$res_var )
+summary(cross_section_expanded)
 
 
 #################
