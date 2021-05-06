@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 3")
-# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
 
 ############
 # Packages #
@@ -138,8 +138,11 @@ names(dat)[2]<-paste("marketpremium")
 ggplot(dat, aes(x=ZurichInsurance, y=market_premium)) +
         geom_point(shape=1) +
         geom_smooth(method=lm,   # Add linear regression line
-                    se=FALSE)
-
+                    se=FALSE) +
+        labs(x = "Excess Return Zurich Insurance", y = "Excess Return SMI", title="Relationship of Zurich's Excess Return and the Market Premium") +
+        scale_x_continuous(labels = scales::percent) +
+        scale_y_continuous(labels = scales::percent) +
+        theme(plot.title = element_text(hjust = 0.5))
 
 #################
 ###  Ex 5.2  ###
@@ -166,12 +169,11 @@ new_data$res_var <- as.numeric(new_data$res_var)
 new_data$ann_returns <- new_data$mean*12
 
 # polot beta realized return relationship
-plot(new_data$beta, new_data$ann_returns, main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return (ann.)")
-
 ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_point(shape=1) +
-        labs(x = "Realized Beta", y = "Mean Excess Return (ann.)", title="Beta Realized Return Relationship")
-
+        labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta-Return Relationship") +
+        scale_y_continuous(labels = scales::percent) +
+        theme(plot.title = element_text(hjust = 0.5))
 
 ###### 2.
 
@@ -195,10 +197,11 @@ mean_excess_market_return
 # add lines to previous plot (*12 to graphically match annualized data)
 ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_point(shape=1) +
-        labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta Realized Return Relationship") +
         geom_abline(slope = coef(cross_section)[[2]]*12, intercept = coef(cross_section)[[1]]*12)  +
-        geom_abline(slope = mean_excess_market_return, intercept = 0, color="red") #+
-        geom_smooth(method = "lm", se = FALSE)
+        geom_abline(slope = mean_excess_market_return, intercept = 0, color="red") +
+        labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta-Return Relationship") +
+        scale_y_continuous(labels = scales::percent) +
+        theme(plot.title = element_text(hjust = 0.5))
 
         
 #not annualized        
