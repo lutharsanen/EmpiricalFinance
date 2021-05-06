@@ -164,9 +164,13 @@ new_data$res_var <- as.numeric(new_data$res_var)
 
 # annualize mean excess return
 new_data$ann_returns <- new_data$mean*12
+new_data$ann_returns_geom <- ((new_data$mean+1)^12 -1)*100
 
 # polot beta realized return relationship
 plot(new_data$beta, new_data$ann_returns, main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return (ann.)")
+
+plot(new_data$beta, new_data$ann_returns_geom, main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return (ann.)")
+
 
 ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_point(shape=1) +
@@ -183,31 +187,28 @@ summary(cross_section)
 
 mean_excess_market_return <- colMeans(market_premium, na.rm = TRUE)
 mean_excess_market_return 
-
+View(excess_market_return_ann)
+excess_market_return_ann <- ((mean_excess_market_return+1)^12 -1)*100
 ###### 3.
 
 #See t-values in 5.2.2
 
 
 ###### 4.
+gamma_1 <- ((coef(cross_section)[[2]]+1)^12 -1)
+gamma_1
+gamma_0 <- ((coef(cross_section)[[1]]+1)^12-1)
+gamma_0
+riskfree_rate <- ((colMeans(interest_rates_mon)+1)^12 -1)
 
-
-# add lines to previous plot (*12 to graphically match annualized data)
 ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_point(shape=1) +
         labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta Realized Return Relationship") +
-        geom_abline(slope = coef(cross_section)[[2]]*12, intercept = coef(cross_section)[[1]]*12)  +
-        geom_abline(slope = mean_excess_market_return, intercept = 0, color="red") #+
+        geom_abline(slope = gamma_1, intercept = gamma_0) +
+        geom_abline(slope = ((mean_excess_market_return +1)^12 -1), intercept = riskfree_rate, color="red") #+
         geom_smooth(method = "lm", se = FALSE)
 
         
-#not annualized        
-        ggplot(new_data, aes(x=beta, y=mean)) +
-                geom_point(shape=1) +
-                labs(x = "Realized Beta", y = "Mean Excess Return", title="Beta Realized Return Relationship") +
-                geom_abline(slope = coef(cross_section)[[2]], intercept = coef(cross_section)[[1]])  +
-                geom_abline(slope = mean_excess_market_return, intercept = 0, color="red") #+
-        geom_smooth(method = "lm", se = FALSE)
 
 ###### 5.
 
