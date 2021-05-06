@@ -77,9 +77,9 @@ for(i in 1:ncol(excess_return)){
         parsed_name <- gsub('.{5}$', '', company_name)
         new_row <- c(company_name = parsed_name, 
                      alpha = beta_regression$coefficients[1,1],
-                     alpha_t_value = beta_regression$coefficients[1,2],
+                     alpha_t_value = beta_regression$coefficients[1,3],
                      beta = beta_regression$coefficients[2,1],
-                     beta_t_value = beta_regression$coefficients[2,2],
+                     beta_t_value = beta_regression$coefficients[2,3],
                      res_var = var(residuals(beta_regression))
                      )
         lin_reg_values<- rbind(lin_reg_values, new_row) 
