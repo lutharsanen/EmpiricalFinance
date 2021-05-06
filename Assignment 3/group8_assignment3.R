@@ -77,9 +77,9 @@ for(i in 1:ncol(excess_return)){
         parsed_name <- gsub('.{5}$', '', company_name)
         new_row <- c(company_name = parsed_name, 
                      alpha = beta_regression$coefficients[1,1],
-                     alpha_t_value = beta_regression$coefficients[1,2],
+                     alpha_t_value = beta_regression$coefficients[1,3],
                      beta = beta_regression$coefficients[2,1],
-                     beta_t_value = beta_regression$coefficients[2,2],
+                     beta_t_value = beta_regression$coefficients[2,3],
                      res_var = var(residuals(beta_regression))
                      )
         lin_reg_values<- rbind(lin_reg_values, new_row) 
@@ -138,8 +138,11 @@ names(dat)[2]<-paste("marketpremium")
 ggplot(dat, aes(x=ZurichInsurance, y=market_premium)) +
         geom_point(shape=1) +
         geom_smooth(method=lm,   # Add linear regression line
-                    se=FALSE)
-
+                    se=FALSE) +
+        labs(x = "Excess Return Zurich Insurance", y = "Excess Return SMI", title="Relationship of Zurich's Excess Return and the Market Premium") +
+        scale_x_continuous(labels = scales::percent) +
+        scale_y_continuous(labels = scales::percent) +
+        theme(plot.title = element_text(hjust = 0.5))
 
 #################
 ###  Ex 5.2  ###
@@ -166,7 +169,7 @@ new_data$res_var <- as.numeric(new_data$res_var)
 new_data$ann_returns <- new_data$mean*12
 new_data$ann_returns_geom <- ((new_data$mean+1)^12 -1)*100
 
-# polot beta realized return relationship
+# plot beta realized return relationship
 plot(new_data$beta, new_data$ann_returns, main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return (ann.)")
 
 plot(new_data$beta, new_data$ann_returns_geom, main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return (ann.)")
@@ -174,8 +177,9 @@ plot(new_data$beta, new_data$ann_returns_geom, main = "Beta Realized Return Rela
 
 ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_point(shape=1) +
-        labs(x = "Realized Beta", y = "Mean Excess Return (ann.)", title="Beta Realized Return Relationship")
-
+        labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta-Return Relationship") +
+        scale_y_continuous(labels = scales::percent) +
+        theme(plot.title = element_text(hjust = 0.5))
 
 ###### 2.
 
@@ -207,6 +211,8 @@ ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_abline(slope = gamma_1, intercept = gamma_0) +
         geom_abline(slope = ((mean_excess_market_return +1)^12 -1), intercept = riskfree_rate, color="red") #+
         geom_smooth(method = "lm", se = FALSE)
+
+
 
         
 
