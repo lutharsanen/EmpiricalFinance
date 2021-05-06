@@ -209,12 +209,10 @@ ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_point(shape=1) +
         labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta Realized Return Relationship") +
         geom_abline(slope = gamma_1, intercept = gamma_0) +
-        geom_abline(slope = ((mean_excess_market_return +1)^12 -1), intercept = riskfree_rate, color="red") #+
-        geom_smooth(method = "lm", se = FALSE)
-
-
-
-        
+        geom_abline(slope = ((mean_excess_market_return +1)^12 -1), intercept = riskfree_rate, color="red") +
+        scale_y_continuous(labels = scales::percent)+
+        theme(plot.title = element_text(hjust = 0.5)) 
+  
 
 ###### 5.
 
