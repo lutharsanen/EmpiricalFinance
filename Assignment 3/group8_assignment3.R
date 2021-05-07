@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 3")
-# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
 
 ############
 # Packages #
@@ -33,13 +33,10 @@ interest_rates <- read.delim(file = 'A3_dataset_03.txt', header = TRUE, sep = '\
 # # create monthly returns for stocks and SMI
 date <- as.Date(prices[,1], format = "%d.%m.%Y")
 prices.ts <- xts(x = prices[,-1], order.by = date)
-#View(prices.ts)
 returns <- Return.calculate(prices = prices.ts, method = 'log')
-# 
 SMI_monthly <- xts(SMI_monthly[,-1], order.by = as.Date(SMI_monthly$Date, format = "%d.%m.%Y"))
-#View(SMI_monthly)
 SMI_TotRet_mon <- Return.calculate(SMI_monthly, method = "log")
-# 
+ 
 # # turn interest_rates into ts and divide by 100 because it is in percentages and turn into monthly rates
 interest_rates <- xts(interest_rates[,-1], order.by = as.Date(interest_rates$Date,  format = "%d.%m.%Y"))
 interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
@@ -167,19 +164,15 @@ new_data$res_var <- as.numeric(new_data$res_var)
 
 # annualize mean excess return
 new_data$ann_returns <- new_data$mean*12
-new_data$ann_returns_geom <- ((new_data$mean+1)^12 -1)*100
+new_data$ann_returns_geom <- ((new_data$mean+1)^12 -1)
 
 # plot beta realized return relationship
-plot(new_data$beta, new_data$ann_returns, main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return (ann.)")
-
-plot(new_data$beta, new_data$ann_returns_geom, main = "Beta Realized Return Relationship", xlab="Realized Beta", ylab="Mean Excess Return (ann.)")
-
-
-ggplot(new_data, aes(x=beta, y=ann_returns)) +
+ggplot(new_data, aes(x=beta, y=ann_returns_geom)) +
         geom_point(shape=1) +
         labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta-Return Relationship") +
         scale_y_continuous(labels = scales::percent) +
         theme(plot.title = element_text(hjust = 0.5))
+
 
 ###### 2.
 
@@ -188,11 +181,11 @@ cross_section <- lm(new_data$mean ~ new_data$beta)
 summary(cross_section)
 
 #sample mean excess return:
-
 mean_excess_market_return <- colMeans(market_premium, na.rm = TRUE)
 mean_excess_market_return 
-View(excess_market_return_ann)
-excess_market_return_ann <- ((mean_excess_market_return+1)^12 -1)*100
+excess_market_return_ann <- ((mean_excess_market_return+1)^12 -1)
+excess_market_return_ann
+
 ###### 3.
 
 #See t-values in 5.2.2
@@ -208,10 +201,10 @@ riskfree_rate <- ((colMeans(interest_rates_mon)+1)^12 -1)
 ggplot(new_data, aes(x=beta, y=ann_returns)) +
         geom_point(shape=1) +
         labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta Realized Return Relationship") +
-        geom_abline(slope = gamma_1, intercept = gamma_0) +
+        geom_abline(slope = gamma_1, intercept = gamma_0, color="blue") +
         geom_abline(slope = ((mean_excess_market_return +1)^12 -1), intercept = riskfree_rate, color="red") +
         scale_y_continuous(labels = scales::percent)+
-        theme(plot.title = element_text(hjust = 0.5)) 
+        theme(plot.title = element_text(hjust = 0.5))
   
 
 ###### 5.
