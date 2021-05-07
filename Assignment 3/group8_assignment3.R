@@ -63,8 +63,11 @@ lin_reg_values <- data.frame(
         company_name = character(),
         alpha = double(),
         alpha_t_value = double(),
+        alpha_t_value_calc = double(),
         beta=double(),
-        beta_t_value = double())
+        beta_t_value = double(),
+        beta_t_value_calc = double(),
+        res_var = double())
 
 # regress excess return over
 
@@ -75,8 +78,10 @@ for(i in 1:ncol(excess_return)){
         new_row <- c(company_name = parsed_name, 
                      alpha = beta_regression$coefficients[1,1],
                      alpha_t_value = beta_regression$coefficients[1,3],
+                     alpha_t_value_calc = (beta_regression$coefficients[1,1]/beta_regression$coefficients[1,2]),
                      beta = beta_regression$coefficients[2,1],
                      beta_t_value = beta_regression$coefficients[2,3],
+                     beta_t_value_calc = beta_regression$coefficients[2,1]/beta_regression$coefficients[2,2],
                      res_var = var(residuals(beta_regression))
                      )
         lin_reg_values<- rbind(lin_reg_values, new_row) 
@@ -86,9 +91,11 @@ for(i in 1:ncol(excess_return)){
 names(lin_reg_values)[1]<-paste("company_name")
 names(lin_reg_values)[2]<-paste("alpha")
 names(lin_reg_values)[3]<-paste("alpha_t_value")
-names(lin_reg_values)[4]<-paste("beta")
-names(lin_reg_values)[5]<-paste("beta_t_value")
-names(lin_reg_values)[6]<-paste("res_var")
+names(lin_reg_values)[4]<-paste("alpha_t_value_calc")
+names(lin_reg_values)[5]<-paste("beta")
+names(lin_reg_values)[6]<-paste("beta_t_value")
+names(lin_reg_values)[7]<-paste("beta_t_value_calc")
+names(lin_reg_values)[8]<-paste("res_var")
 
 
 ####### 3.
@@ -140,6 +147,8 @@ ggplot(dat, aes(x=ZurichInsurance, y=market_premium)) +
         scale_x_continuous(labels = scales::percent) +
         scale_y_continuous(labels = scales::percent) +
         theme(plot.title = element_text(hjust = 0.5))
+
+ggsave(file="ZurichInsurance_plot.pdf", width=10, height=4, dpi=300)
 
 #################
 ###  Ex 5.2  ###
