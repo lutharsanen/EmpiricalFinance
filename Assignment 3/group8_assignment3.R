@@ -186,6 +186,9 @@ mean_excess_market_return
 excess_market_return_ann <- ((mean_excess_market_return+1)^12 -1)
 excess_market_return_ann
 
+confint(cross_section)
+confint(cross_section, level=.99)
+
 ###### 3.
 
 #See t-values in 5.2.2
