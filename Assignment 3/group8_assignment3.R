@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 3")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
+setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
 
 ############
 # Packages #
@@ -161,7 +161,7 @@ ggsave(file="ZurichInsurance_plot.pdf", width=10, height=4, dpi=300)
 new_data <- cbind(lin_reg_values,mean_values)
 
 #remove redundant column
-new_data[,7] <- NULL
+new_data[,9] <- NULL
 
 # convert columns to numeric values
 new_data$beta <- as.numeric(new_data$beta)
