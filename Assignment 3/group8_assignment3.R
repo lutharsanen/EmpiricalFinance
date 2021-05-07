@@ -201,7 +201,7 @@ gamma_0 <- ((coef(cross_section)[[1]]+1)^12-1)
 gamma_0
 riskfree_rate <- ((colMeans(interest_rates_mon)+1)^12 -1)
 
-ggplot(new_data, aes(x=beta, y=ann_returns)) +
+ggplot(new_data, aes(x=beta, y=ann_returns_geom)) +
         geom_point(shape=1) +
         labs(x = "Realized Beta", y = "Mean Excess Return (annualized)", title="Beta Realized Return Relationship") +
         geom_abline(slope = gamma_1, intercept = gamma_0, color="blue") +
