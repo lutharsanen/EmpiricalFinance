@@ -25,28 +25,39 @@ library(ggplot2)
 ###############
 # Data import #
 ###############
-prices <- read.delim(file = 'A3_dataset_01.txt', header = TRUE, sep = '\t', dec = '.')
-SMI_monthly <- read.delim(file = 'A3_dataset_02.txt', header = TRUE, sep = '\t', dec = '.')
-interest_rates <- read.delim(file = 'A3_dataset_03.txt', header = TRUE, sep = '\t', dec = '.')
+
+prices_adjusted <- read.delim(file = 'A4_dataset_01.txt', header = TRUE, sep = '\t', dec = '.')
+book_values <- read.delim(file = 'A4_dataset_02.txt', header = TRUE, sep = '\t', dec = '.')
+shares <- read.delim(file = 'A4_dataset_03.txt', header = TRUE, sep = '\t', dec = '.')
+prices_unadjusted <- read.delim(file = 'A4_dataset_04.txt', header = TRUE, sep = '\t', dec = '.')
+riskfree <- read.delim(file = 'A4_dataset_05.txt', header = TRUE, sep = '\t', dec = '.')
+factor_returns <- read.delim(file = 'A4_dataset_06.txt', header = TRUE, sep = '\t', dec = '.')
 
 
-# # create monthly returns for stocks and SMI
-date <- as.Date(prices[,1], format = "%d.%m.%Y")
-prices.ts <- xts(x = prices[,-1], order.by = date)
-returns <- Return.calculate(prices = prices.ts, method = 'log')
-SMI_monthly <- xts(SMI_monthly[,-1], order.by = as.Date(SMI_monthly$Date, format = "%d.%m.%Y"))
-SMI_TotRet_mon <- Return.calculate(SMI_monthly, method = "log")
- 
-# # turn interest_rates into ts and divide by 100 because it is in percentages and turn into monthly rates
-interest_rates <- xts(interest_rates[,-1], order.by = as.Date(interest_rates$Date,  format = "%d.%m.%Y"))
-interest_rates_mon <- ((1+interest_rates/100)^(1/12)-1)
 
-# take logs of interest rates
-interest_rates_mon <- log(1+interest_rates_mon)
+
+prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted $Date, format = "%d.%m.%Y"))
+returns <- Return.calculate(prices = prices_adjusted, method = 'log')
+
+book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
+
+shares <- xts(shares[,-1], order.by = as.Date(shares$Date, format = "%d.%m.%Y"))
+
+prices_unadjusted <- xts(prices_unadjusted[,-1], order.by = as.Date(prices_unadjusted$Date, format = "%d.%m.%Y"))
+
+riskfree <- xts(riskfree[,-1], order.by = as.Date(riskfree$Date, format = "%d.%m.%Y"))
+
+factor_returns <- xts(factor_returns[,-1], order.by = as.Date(factor_returns$Date, format = "%d.%m.%Y"))
+
+
 
 #################
 ###  Ex 5.1  ###
 #################
+
+#1. Calculate Market Cap
+
+
 
 
 
