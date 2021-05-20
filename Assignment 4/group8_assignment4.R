@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 4")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
+setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
 
 ############
 # Packages #
@@ -11,7 +11,6 @@
  # install.packages("psych")
  # install.packages("roll")
  # install.packages("data.table")
- # install.packages("matrixStats")
 ###########
 
 # load libraries
@@ -21,7 +20,6 @@ library(psych)
 library(roll)
 library(data.table)
 library(ggplot2)
-library(matrixStats)
 
 
 ###############
@@ -69,19 +67,42 @@ for (i in 1:361){
   medians <- as.data.frame(rowMedians(market_cap[1:i], na.rm = TRUE))
 }
 
-
-#View(medians)
 market_cap$Median_CAP <- medians[,1]
-#View(market_cap)
 
-S_portfolio <- market_cap
-for (i in 1:384){
-  S_portfolio %>%
-    transform(i = ifelse(i<Median_CAP, 1, NA))
+View(market_cap)
+
+portfolio_B <- market_cap
+
+for (i in 1:nrow(market_cap)) {
+  for(j in 1:ncol(market_cap)) {
+    condition <- market_cap[i,ncol(market_cap)] < market_cap[i,j]
+    if(!is.na(condition) && condition) {
+      portfolio_B[i,j] <- 1
+    }
+    else {
+      portfolio_B[i,j] <- NA
+    }
+  }
 }
 
-S_portfolio %>%
-  transform(ROG = ifelse(ROG>Median_CAP,1,NA))
+#We incoorporate all values equal to the median in the portfolio small.
+
+portfolio_S <- market_cap
+
+for (i in 1:nrow(market_cap)) {
+  for(j in 1:ncol(market_cap)) {
+    condition <- market_cap[i,ncol(market_cap)] >= market_cap[i,j]
+    if(!is.na(condition) && condition) {
+      portfolio_S[i,j] <- 1
+    }
+    else {
+      portfolio_S[i,j] <- NA
+    }
+  }
+}
+
+portfolio_S_mask <- rbind(,portfolio_S)
+
 
 
 #4.
