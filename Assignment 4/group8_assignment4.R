@@ -61,6 +61,28 @@ for (i in 1:384){
   market_cap <- prices_unadjusted[,1:i]*shares[,1:i]
 }  
 
+#2.
+#View(market_cap)
+for (i in 1:361){
+  medians <- as.data.frame(rowMedians(market_cap[1:i], na.rm = TRUE))
+}
+
+
+View(medians)
+medians$Median_CAP <- medians[,1]
+market_cap$Median_CAP <- medians$Median_CAP
+View(market_cap)
+
+
+
+#4.
+
+lagges_book_values <- lag(book_values, k=6)
+
+for (i in 1:384){
+  book_to_market <- lagges_book_values[,1:i]/market_cap[,1:i]
+}  
+View(book_to_market)
 
 
 
