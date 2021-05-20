@@ -67,11 +67,41 @@ for (i in 1:361){
   medians <- as.data.frame(rowMedians(market_cap[1:i], na.rm = TRUE))
 }
 
+market_cap$Median_CAP <- medians[,1]
 
-View(medians)
-medians$Median_CAP <- medians[,1]
-market_cap$Median_CAP <- medians$Median_CAP
 View(market_cap)
+
+portfolio_B <- market_cap
+
+for (i in 1:nrow(market_cap)) {
+  for(j in 1:ncol(market_cap)) {
+    condition <- market_cap[i,ncol(market_cap)] < market_cap[i,j]
+    if(!is.na(condition) && condition) {
+      portfolio_B[i,j] <- 1
+    }
+    else {
+      portfolio_B[i,j] <- NA
+    }
+  }
+}
+
+#We incoorporate all values equal to the median in the portfolio small.
+
+portfolio_S <- market_cap
+
+for (i in 1:nrow(market_cap)) {
+  for(j in 1:ncol(market_cap)) {
+    condition <- market_cap[i,ncol(market_cap)] >= market_cap[i,j]
+    if(!is.na(condition) && condition) {
+      portfolio_S[i,j] <- 1
+    }
+    else {
+      portfolio_S[i,j] <- NA
+    }
+  }
+}
+
+portfolio_S_mask <- rbind(,portfolio_S)
 
 
 
