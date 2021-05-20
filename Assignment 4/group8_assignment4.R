@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 4")
-setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
 
 ############
 # Packages #
@@ -11,6 +11,7 @@ setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?
  # install.packages("psych")
  # install.packages("roll")
  # install.packages("data.table")
+ # install.packages("matrixStats")
 ###########
 
 # load libraries
@@ -20,6 +21,7 @@ library(psych)
 library(roll)
 library(data.table)
 library(ggplot2)
+library(matrixStats)
 
 
 ###############
@@ -68,11 +70,18 @@ for (i in 1:361){
 }
 
 
-View(medians)
-medians$Median_CAP <- medians[,1]
-market_cap$Median_CAP <- medians$Median_CAP
-View(market_cap)
+#View(medians)
+market_cap$Median_CAP <- medians[,1]
+#View(market_cap)
 
+S_portfolio <- market_cap
+for (i in 1:384){
+  S_portfolio %>%
+    transform(i = ifelse(i<Median_CAP, 1, NA))
+}
+
+S_portfolio %>%
+  transform(ROG = ifelse(ROG>Median_CAP,1,NA))
 
 
 #4.
