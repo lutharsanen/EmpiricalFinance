@@ -57,6 +57,10 @@ factor_returns <- xts(factor_returns[,-1], order.by = as.Date(factor_returns$Dat
 
 #1. Calculate Market Cap
 
+for (i in 1:384){
+  market_cap <- prices_unadjusted[,1:i]*shares[,1:i]
+}  
+
 
 
 
