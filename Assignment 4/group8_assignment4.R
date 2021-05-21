@@ -37,6 +37,9 @@ factor_returns <- read.delim(file = 'A4_dataset_06.txt', header = TRUE, sep = '\
 
 
 # create time-series files and get returns from prices
+date_monthly$Date <- prices_adjusted$Date
+as.data.frame(date_monthly)
+
 prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted $Date, format = "%d.%m.%Y"))
 returns <- Return.calculate(prices = prices_adjusted, method = 'log')
 book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
@@ -88,8 +91,6 @@ print(condition)
 
 
 
-
-
 #We incoorporate all values equal to the median in the portfolio small.
 
 portfolio_S <- market_cap
@@ -131,8 +132,13 @@ View(returns_SMB)
 
 #annualized mean return
 mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
+
 annualized_return <- (((mean(mean_returns, na.rm = TRUE))+1)^(1/12)-1)*100
 annualized_return
+
+View(date_monthly)
+cumulative_returns <- cumprod(1+mean_returns)
+plot(x=date_daily2, y=cumulative_returns_p1_daily, ylim=c(0,18),type= "l", lty = 1, lwd = 3, col = "turquoise", cex.axis = 1, cex.lab = 1, ylab = "Cumulative Return", xlab = "Time")
 
 
 #4.
