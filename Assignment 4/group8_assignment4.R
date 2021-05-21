@@ -130,15 +130,26 @@ View(returns_B)
 returns_SMB <- returns_S - returns_B
 View(returns_SMB)
 
-#annualized mean return
+# annualized mean return
 mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
 
 annualized_return <- (((mean(mean_returns, na.rm = TRUE))+1)^(1/12)-1)*100
 annualized_return
 
-View(date_monthly)
+# Plot cumulative Returns 
+mean_returns <- as.data.frame(mean_returns)
+mean_returns <- mean_returns[2:nrow(mean_returns),, drop=F]
+View(mean_returns) #360 entries
+
+Date <- date_monthly[2:nrow(date_monthly),, drop=F]
+
 cumulative_returns <- cumprod(1+mean_returns)
-plot(x=date_daily2, y=cumulative_returns_p1_daily, ylim=c(0,18),type= "l", lty = 1, lwd = 3, col = "turquoise", cex.axis = 1, cex.lab = 1, ylab = "Cumulative Return", xlab = "Time")
+
+cum_returns <- cbind(Date, cumulative_returns)
+cum_returns$Date <- as.Date(cum_returns$Date, format = "%d.%m.%Y")
+View(cum_returns)
+
+plot(cum_returns$Date, cum_returns$mean_returns, type = "l", lty = 1,  lwd = 3, col = "black", ylab = "Cumulative Return", xlab = "Time")
 
 
 #4.
