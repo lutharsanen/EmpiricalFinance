@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 4")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
+# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
 
 ############
 # Packages #
@@ -58,49 +58,81 @@ for (i in 1:384){
   market_cap <- prices_unadjusted[,1:i]*shares[,1:i]
 }  
 
-####### 2.
-
-# calculate monthly medians of market caps
+#2.
+#View(market_cap)
 for (i in 1:361){
   medians <- as.data.frame(rowMedians(market_cap[1:i], na.rm = TRUE))
 }
 
-# add medians to market cap file
 market_cap$Median_CAP <- medians[,1]
 
-# create portfolio "B" (big companies)
+View(market_cap)
+
 portfolio_B <- market_cap
+
 for (i in 1:nrow(market_cap)) {
   for(j in 1:ncol(market_cap)) {
     condition <- market_cap[i,ncol(market_cap)] < market_cap[i,j]
-    if(!is.na(condition) && condition) {
-      portfolio_B[i,j] <- 1
-    }
-    else {
-      portfolio_B[i,j] <- NA
+    if(!is.na(condition)) {
+      if(condition) {
+        portfolio_B[i,j] <- 1
+      }
+      else {
+        portfolio_B[i,j] <- 0
+      } 
     }
   }
 }
 
-#We incoorporate all values equal to the median in the portfolio small.
+print(condition)
 
+
+
+
+
+#We incoorporate all values equal to the median in the portfolio small.
 
 portfolio_S <- market_cap
 
 for (i in 1:nrow(market_cap)) {
   for(j in 1:ncol(market_cap)) {
     condition <- market_cap[i,ncol(market_cap)] >= market_cap[i,j]
-    if(!is.na(condition) && condition) {
-      portfolio_S[i,j] <- 1
-    }
-    else {
-      portfolio_S[i,j] <- NA
+    if(!is.na(condition)) {
+      if(condition) {
+        portfolio_S[i,j] <- 1
+      }
+      else {
+        portfolio_S[i,j] <- 0
+      } 
     }
   }
 }
 
-#portfolio_S_mask <- rbind(rep(NA,ncol(portfolio_S)),portfolio_S)
 
+#3. 
+lag_portfolio_S <- lag(portfolio_S, k=1)
+lag_portfolio_B <- lag(portfolio_B, k=1)
+
+
+#Calculate mean returns for S
+for (i in 1:384){
+  returns_S <- returns[,1:i]*lag_portfolio_S[,1:i]
+} 
+#View(returns_S)
+
+#Calculate mean returns for B
+for (i in 1:384){
+  returns_B <- returns[,1:i]*lag_portfolio_B[,1:i]
+} 
+View(returns_B)
+
+returns_SMB <- returns_S - returns_B
+View(returns_SMB)
+
+#annualized mean return
+mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
+annualized_return <- (((mean(mean_returns, na.rm = TRUE))+1)^(1/12)-1)*100
+annualized_return
 
 
 #4.
