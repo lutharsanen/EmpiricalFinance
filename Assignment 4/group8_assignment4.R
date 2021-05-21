@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 4")
-setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 3")
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
 
 ############
 # Packages #
@@ -20,6 +20,7 @@ library(psych)
 library(roll)
 library(data.table)
 library(ggplot2)
+library(matrixStats)
 
 
 ###############
@@ -35,18 +36,13 @@ factor_returns <- read.delim(file = 'A4_dataset_06.txt', header = TRUE, sep = '\
 
 
 
-
+# create time-series files and get returns from prices
 prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted $Date, format = "%d.%m.%Y"))
 returns <- Return.calculate(prices = prices_adjusted, method = 'log')
-
 book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
-
 shares <- xts(shares[,-1], order.by = as.Date(shares$Date, format = "%d.%m.%Y"))
-
 prices_unadjusted <- xts(prices_unadjusted[,-1], order.by = as.Date(prices_unadjusted$Date, format = "%d.%m.%Y"))
-
 riskfree <- xts(riskfree[,-1], order.by = as.Date(riskfree$Date, format = "%d.%m.%Y"))
-
 factor_returns <- xts(factor_returns[,-1], order.by = as.Date(factor_returns$Date, format = "%d.%m.%Y"))
 
 
@@ -55,24 +51,25 @@ factor_returns <- xts(factor_returns[,-1], order.by = as.Date(factor_returns$Dat
 ###  Ex 5.1  ###
 #################
 
-#1. Calculate Market Cap
+####### 1.
 
+# Calculate Market Cap
 for (i in 1:384){
   market_cap <- prices_unadjusted[,1:i]*shares[,1:i]
 }  
 
-#2.
-#View(market_cap)
+####### 2.
+
+# calculate monthly medians of market caps
 for (i in 1:361){
   medians <- as.data.frame(rowMedians(market_cap[1:i], na.rm = TRUE))
 }
 
+# add medians to market cap file
 market_cap$Median_CAP <- medians[,1]
 
-View(market_cap)
-
+# create portfolio "B" (big companies)
 portfolio_B <- market_cap
-
 for (i in 1:nrow(market_cap)) {
   for(j in 1:ncol(market_cap)) {
     condition <- market_cap[i,ncol(market_cap)] < market_cap[i,j]
@@ -86,6 +83,7 @@ for (i in 1:nrow(market_cap)) {
 }
 
 #We incoorporate all values equal to the median in the portfolio small.
+
 
 portfolio_S <- market_cap
 
@@ -101,7 +99,7 @@ for (i in 1:nrow(market_cap)) {
   }
 }
 
-portfolio_S_mask <- rbind(,portfolio_S)
+#portfolio_S_mask <- rbind(rep(NA,ncol(portfolio_S)),portfolio_S)
 
 
 
