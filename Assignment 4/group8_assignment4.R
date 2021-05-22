@@ -163,7 +163,7 @@ SR_portfolio <- (annualized_mean_return-riskfreerate)/SD_portfolio
 print(SR_portfolio)
 
 
-#4.
+#4. Book to market
 
 lagges_book_values <- lag(book_values, k=6)
 
@@ -171,6 +171,58 @@ for (i in 1:384){
   book_to_market <- lagges_book_values[,1:i]/market_cap[,1:i]
 }  
 View(book_to_market)
+
+# 7. Calculate median and assign to portfolios
+
+for (i in 1:nrow(book_to_market)){
+  medians_2 <- as.data.frame(rowMedians(book_to_market[1:i], na.rm = TRUE))
+}
+View(medians_2)
+
+book_to_market$medians2 <- medians_2[,1]
+
+View(book_to_market)
+
+portfolio_H <- book_to_market
+
+for (i in 1:nrow(portfolio_H)) {
+  for(j in 1:ncol(portfolio_H)) {
+    condition <- portfolio_H[i,ncol(portfolio_H)] < portfolio_H[i,j]
+    if(!is.na(condition)) {
+      if(condition) {
+        portfolio_H[i,j] <- 1
+      }
+      else {
+        portfolio_H[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+
+portfolio_L <- book_to_market
+
+for (i in 1:nrow(portfolio_L)) {
+  for(j in 1:ncol(portfolio_L)) {
+    condition <- portfolio_L[i,ncol(portfolio_L)] >= portfolio_L[i,j]
+    if(!is.na(condition)) {
+      if(condition) {
+        portfolio_L[i,j] <- 1
+      }
+      else {
+        portfolio_L[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+# 8.
+
+# Jan 1998: UBS in Portfolio High; Nestle Roche and Novartis are in portfolio Low
+# Jan 2008: All big four are in the Low portfolio
+
 
 
 
