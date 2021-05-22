@@ -61,7 +61,7 @@ for (i in 1:384){
   market_cap <- prices_unadjusted[,1:i]*shares[,1:i]
 }  
 
-#2.
+####### 2.
 #View(market_cap)
 for (i in 1:361){
   medians <- as.data.frame(rowMedians(market_cap[1:i], na.rm = TRUE))
@@ -110,36 +110,39 @@ for (i in 1:nrow(market_cap)) {
 }
 
 
-#3. 
+####### 3.
 lag_portfolio_S <- lag(portfolio_S, k=1)
 lag_portfolio_B <- lag(portfolio_B, k=1)
 
+#View(lag_portfolio_B)
 
 #Calculate mean returns for S
 for (i in 1:384){
-  returns_S <- returns[,1:i]*lag_portfolio_S[,1:i]
+  returns_S <- returns[,1:i]*(as.numeric(lag_portfolio_S[,1:i]))
 } 
 #View(returns_S)
 
 #Calculate mean returns for B
 for (i in 1:384){
-  returns_B <- returns[,1:i]*lag_portfolio_B[,1:i]
+  returns_B <- returns[,1:i]*(as.numeric(lag_portfolio_B[,1:i]))
 } 
-View(returns_B)
+#View(returns_B)
 
 returns_SMB <- returns_S - returns_B
-View(returns_SMB)
+#View(returns_SMB)
+
 
 # annualized mean return
 mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
 
-annualized_return <- (((mean(mean_returns, na.rm = TRUE))+1)^(1/12)-1)*100
-annualized_return
+annualized_mean_return <- (((mean(mean_returns, na.rm = TRUE))+1)^(1/12)-1)*100
+annualized_mean_return
+
 
 # Plot cumulative Returns 
 mean_returns <- as.data.frame(mean_returns)
 mean_returns <- mean_returns[2:nrow(mean_returns),, drop=F]
-View(mean_returns) #360 entries
+#View(mean_returns) #360 entries
 
 Date <- date_monthly[2:nrow(date_monthly),, drop=F]
 
@@ -147,7 +150,7 @@ cumulative_returns <- cumprod(1+mean_returns)
 
 cum_returns <- cbind(Date, cumulative_returns)
 cum_returns$Date <- as.Date(cum_returns$Date, format = "%d.%m.%Y")
-View(cum_returns)
+#View(cum_returns)
 
 plot(cum_returns$Date, cum_returns$mean_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
@@ -163,21 +166,23 @@ SR_portfolio <- (annualized_mean_return-riskfreerate)/SD_portfolio
 print(SR_portfolio)
 
 
-#4. Book to market
 
-lagges_book_values <- lag(book_values, k=6)
+####### 4. Book to market
+
+lagged_book_values <- lag(book_values, k=6)
 
 for (i in 1:384){
-  book_to_market <- lagges_book_values[,1:i]/market_cap[,1:i]
+  book_to_market <- lagged_book_values[,1:i]/market_cap[,1:i]
 }  
-View(book_to_market)
+#View(book_to_market)
 
-# 7. Calculate median and assign to portfolios
+
+####### 7. Calculate median and assign to portfolios
 
 for (i in 1:nrow(book_to_market)){
   medians_2 <- as.data.frame(rowMedians(book_to_market[1:i], na.rm = TRUE))
 }
-View(medians_2)
+#View(medians_2)
 
 book_to_market$medians2 <- medians_2[,1]
 
@@ -218,12 +223,71 @@ for (i in 1:nrow(portfolio_L)) {
 }
 
 
-# 8.
+####### 8.
 
 # Jan 1998: UBS in Portfolio High; Nestle Roche and Novartis are in portfolio Low
 # Jan 2008: All big four are in the Low portfolio
 
 
+
+####### 9. 
+lag_portfolio_L <- lag(portfolio_L, k=1)
+lag_portfolio_H <- lag(portfolio_H, k=1)
+
+#View(lag_portfolio_B)
+
+#Calculate mean returns for S
+for (i in 1:384){
+  returns_L <- returns[,1:i]*(as.numeric(lag_portfolio_L[,1:i]))
+} 
+View(returns_L)
+
+#Calculate mean returns for B
+for (i in 1:384){
+  returns_H <- returns[,1:i]*(as.numeric(lag_portfolio_H[,1:i]))
+} 
+View(returns_B)
+
+returns_LH <- returns_L - returns_H
+View(returns_LH)
+
+
+# annualized mean return
+mean_returns_LH <- rowMeans(returns_LH, na.rm = TRUE)
+
+annualized_mean_return_LH <- (((mean(mean_returns_LH, na.rm = TRUE))+1)^(1/12)-1)*100
+annualized_mean_return_LH
+
+
+# Plot cumulative Returns 
+mean_returns_LH <- as.data.frame(mean_returns_LH)
+mean_returns_LH <- mean_returns_LH[8:nrow(mean_returns_LH),, drop=F]
+
+View(mean_returns_LH) #354 entries
+
+Date_LH <- date_monthly[8:nrow(date_monthly),, drop=F]
+
+cumulative_returns_LH <- cumprod(1+mean_returns_LH)
+
+cum_returns_LH <- cbind(Date_LH, cumulative_returns_LH)
+cum_returns_LH$Date <- as.Date(cum_returns_LH$Date , format = "%d.%m.%Y")
+#View(cum_returns)
+
+plot(cum_returns_LH$Date, cum_returns_LH$mean_returns_LH, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+
+# Calculate Sharpe Ratio
+
+#riskfreerate <- mean(riskfree) #annualized rsikfree
+
+mean_returns_LH$annualized_returns_LH <- ((mean_returns_LH$mean_returns_LH+1)^(1/12)-1)*100
+
+SD_portfolio <- sd(mean_returns_LH$annualized_returns_LH) #is that correct ??
+
+SR_portfolio <- (annualized_mean_return_LH-riskfreerate)/SD_portfolio
+print(SR_portfolio)
+
+
+####### 10. 
 
 
 
