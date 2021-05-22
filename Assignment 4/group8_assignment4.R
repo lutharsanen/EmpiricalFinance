@@ -149,7 +149,18 @@ cum_returns <- cbind(Date, cumulative_returns)
 cum_returns$Date <- as.Date(cum_returns$Date, format = "%d.%m.%Y")
 View(cum_returns)
 
-plot(cum_returns$Date, cum_returns$mean_returns, type = "l", lty = 1,  lwd = 3, col = "black", ylab = "Cumulative Return", xlab = "Time")
+plot(cum_returns$Date, cum_returns$mean_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+
+# Calculate Sharpe Ratio
+
+riskfreerate <- mean(riskfree) #annualized rsikfree
+
+mean_returns$annualized_returns <- ((mean_returns$mean_returns+1)^(1/12)-1)*100
+
+SD_portfolio <- sd(mean_returns$annualized_returns) #is that correct ??
+
+SR_portfolio <- (annualized_mean_return-riskfreerate)/SD_portfolio
+print(SR_portfolio)
 
 
 #4.
