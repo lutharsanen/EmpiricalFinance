@@ -11,7 +11,7 @@
  # install.packages("psych")
  # install.packages("roll")
  # install.packages("data.table")
-#install.packages("zoo")
+ # install.packages("zoo")
 ###########
 
 # load libraries
@@ -299,17 +299,10 @@ View(returns_company)
 
 
 ####### 11.
-#t-12 to t-1 past returns
-
-rolling_returns <- returns
-rolling_returns<-roll_mean(returns, width = 11)
-#add 1 lag
-rolling_returns_lag <- lag(rolling_returns, k=1)
-
-
-#ODER ???
-rolling_returns <- returns
-rolling_returns<-roll_mean(returns, width = 12)
+#install.packages("TTR")
+library(TTR)
+momentum <- ROC(prices_adjusted, n = 11, type =  "discrete", na.pad = F)
+View(momentum)
 
 
 ####### 12.
