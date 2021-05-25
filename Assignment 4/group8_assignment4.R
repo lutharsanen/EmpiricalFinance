@@ -421,9 +421,32 @@ print(SR_portfolio)
 #################
 
 
+
 ####### 1.
+portfolio_S_new  <- portfolio_S["19910201/20191201"]
+portfolio_B_new <- portfolio_B["19910201/20191201"]
+portfolio_H_new <- portfolio_H["19910201/20191201"]
+portfolio_L_new <- portfolio_L["19910201/20191201"]
+portfolio_U_new <- portfolio_U["19910201/20191201"]
+portfolio_D_new <- portfolio_D["19910201/20191201"]
 
 
+SHU_sums <- portfolio_S_new + portfolio_H_new + portfolio_U_new
+SHU <- SHU_sums
+for (i in 1:nrow(SHU_sums)) {
+  for(j in 1:384) {
+    condition <-  SHU_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        SHU[i,j] <- 1
+      }
+      else {
+        SHU[i,j] <- 0
+      } 
+    }
+  }
+}
+View(SHU)
 ####### 2.
 
 
