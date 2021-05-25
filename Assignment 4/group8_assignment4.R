@@ -12,6 +12,7 @@
  # install.packages("roll")
  # install.packages("data.table")
  # install.packages("zoo")
+install.packages("portsort")
 ###########
 
 # load libraries
@@ -23,7 +24,7 @@ library(data.table)
 library(ggplot2)
 library(matrixStats)
 library(zoo)
-
+library(portsort)
 
 ###############
 # Data import #
@@ -415,15 +416,24 @@ print(SR_portfolio)
 
 
 
-
-
-
-
-
 #################
 ###  Ex 5.2  ###
 #################
 
+
+####### 1.
+
+
+####### 2.
+
+
+####### 3.
+
+
+####### 4.
+
+
+####### 5. 
 
 
 
