@@ -423,13 +423,13 @@ print(SR_portfolio)
 
 
 ####### 1.
-portfolio_S_new  <- portfolio_S["19910201/20191201"]
-portfolio_B_new <- portfolio_B["19910201/20191201"]
-portfolio_H_new <- portfolio_H["19910201/20191201"]
-portfolio_L_new <- portfolio_L["19910201/20191201"]
-portfolio_U_new <- portfolio_U["19910201/20191201"]
-portfolio_D_new <- portfolio_D["19910201/20191201"]
-
+portfolio_S_new  <- portfolio_S["19910101/20191201"]
+portfolio_B_new <- portfolio_B["19910101/20191201"]
+portfolio_H_new <- portfolio_H["19910101/20191201"]
+portfolio_L_new <- portfolio_L["19910101/20191201"]
+portfolio_U_new <- portfolio_U["19910101/20191201"]
+portfolio_D_new <- portfolio_D["19910101/20191201"]
+returns_new <- returns["19910101/20191201"]
 
 SHU_sums <- portfolio_S_new + portfolio_H_new + portfolio_U_new
 SHU <- SHU_sums
@@ -447,6 +447,138 @@ for (i in 1:nrow(SHU_sums)) {
   }
 }
 View(SHU)
+
+SLU_sums <- portfolio_S_new + portfolio_L_new + portfolio_U_new
+SLU <- SLU_sums
+for (i in 1:nrow(SLU_sums)) {
+  for(j in 1:384) {
+    condition <-  SLU_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        SLU[i,j] <- 1
+      }
+      else {
+        SLU[i,j] <- 0
+      } 
+    }
+  }
+}
+
+SLD_sums <- portfolio_S_new + portfolio_L_new + portfolio_D_new
+SLD <- SLD_sums
+for (i in 1:nrow(SLD_sums)) {
+  for(j in 1:384) {
+    condition <-  SLD_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        SLD[i,j] <- 1
+      }
+      else {
+        SLD[i,j] <- 0
+      } 
+    }
+  }
+}
+
+SHD_sums <- portfolio_S_new + portfolio_H_new + portfolio_D_new
+SHD <- SHD_sums
+for (i in 1:nrow(SHD_sums)) {
+  for(j in 1:384) {
+    condition <-  SHD_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        SHD[i,j] <- 1
+      }
+      else {
+        SHD[i,j] <- 0
+      } 
+    }
+  }
+}
+
+BLD_sums <- portfolio_B_new + portfolio_L_new + portfolio_D_new
+BLD <- BLD_sums
+for (i in 1:nrow(BLD_sums)) {
+  for(j in 1:384) {
+    condition <-  BLD_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        BLD[i,j] <- 1
+      }
+      else {
+        BLD[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+BHD_sums <- portfolio_B_new + portfolio_H_new + portfolio_D_new
+BHD <- BHD_sums
+for (i in 1:nrow(BHD_sums)) {
+  for(j in 1:384) {
+    condition <-  BHD_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        BHD[i,j] <- 1
+      }
+      else {
+        BHD[i,j] <- 0
+      } 
+    }
+  }
+}
+
+BLU_sums <- portfolio_B_new + portfolio_L_new + portfolio_U_new
+BLU <- BLU_sums
+for (i in 1:nrow(BLU_sums)) {
+  for(j in 1:384) {
+    condition <-  BLU_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        BLU[i,j] <- 1
+      }
+      else {
+        BLU[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+BHU_sums <- portfolio_B_new + portfolio_H_new + portfolio_U_new
+BHU <- BHU_sums
+for (i in 1:nrow(BHU_sums)) {
+  for(j in 1:384) {
+    condition <-  BHU_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        BHU[i,j] <- 1
+      }
+      else {
+        BHU[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+
+
+portfolio.turnover(BHU) #ERROR: Please input the portfolio list object from the output of one of the conditional or unconditional sorting functions
+
+conditional.sort(Fa,Fb=NULL,Fc=NULL,R.Forward,dimA,dimB=NULL,dimC=NULL,type = 7)
+
+dimA = c(0,0.5,1)
+dimB = c(0,0.5,1)
+dimC = c(0,0.5,1)
+sort.output <- conditional.sort(portfolio_S_new, portfolio_H_new, portfolio_U_new, returns_new,dimA, dimB, dimC)
+R.Forward = Factors[[1]]; R.Lag = Factors[[2]]; V.Lag = Factors[[3]]
+sort.output <- conditional.sort(market_cap, returns_new,dimA, R.Forward = R.Forward)
+
+
+
+
 ####### 2.
 
 
