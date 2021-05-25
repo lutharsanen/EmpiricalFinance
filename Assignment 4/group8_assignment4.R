@@ -11,6 +11,7 @@
  # install.packages("psych")
  # install.packages("roll")
  # install.packages("data.table")
+#install.packages("zoo")
 ###########
 
 # load libraries
@@ -21,6 +22,7 @@ library(roll)
 library(data.table)
 library(ggplot2)
 library(matrixStats)
+library(zoo)
 
 
 ###############
@@ -42,7 +44,11 @@ as.data.frame(date_monthly)
 
 prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted $Date, format = "%d.%m.%Y"))
 returns <- Return.calculate(prices = prices_adjusted, method = 'log')
+
 book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
+#####To DO: remove book values below 0!!
+
+
 shares <- xts(shares[,-1], order.by = as.Date(shares$Date, format = "%d.%m.%Y"))
 prices_unadjusted <- xts(prices_unadjusted[,-1], order.by = as.Date(prices_unadjusted$Date, format = "%d.%m.%Y"))
 riskfree <- xts(riskfree[,-1], order.by = as.Date(riskfree$Date, format = "%d.%m.%Y"))
@@ -288,6 +294,94 @@ print(SR_portfolio)
 
 
 ####### 10. 
+returns_company <- round(colMeans(returns, na.rm = T), digits = 6)
+View(returns_company)
+
+
+####### 11.
+#t-12 to t-1 past returns
+
+rolling_returns <- returns
+rolling_returns<-roll_mean(returns, width = 11)
+#add 1 lag
+rolling_returns_lag <- lag(rolling_returns, k=1)
+
+
+#ODER ???
+rolling_returns <- returns
+rolling_returns<-roll_mean(returns, width = 12)
+
+
+####### 12.
+
+
+for (i in 1:nrow(rolling_returns)){
+  medians_3 <- as.data.frame(rowMedians(rolling_returns[1:i], na.rm = TRUE))
+}
+
+#View(medians_3)
+
+rolling_returns$medians3 <- medians_3[,1]
+
+portfolio_D <- rolling_returns #go short on Loser Comapnies D
+
+for (i in 1:nrow(portfolio_D)) {
+  for(j in 1:ncol(portfolio_D)) {
+    condition <- portfolio_D[i,ncol(portfolio_D)] >= portfolio_D[i,j] # loser stocks median is bigger or equal to value
+    if(!is.na(condition)) {
+      if(condition) {
+        portfolio_D[i,j] <- 1
+      }
+      else {
+        portfolio_D[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+
+portfolio_U <- rolling_returns #go long on Winner Comapnies U
+
+for (i in 1:nrow(portfolio_U)) {
+  for(j in 1:ncol(portfolio_U)) {
+    condition <- portfolio_U[i,ncol(portfolio_U)] < portfolio_U[i,j] #Winner portfolio median is smaller than values
+    if(!is.na(condition)) {
+      if(condition) {
+        portfolio_U[i,j] <- 1
+      }
+      else {
+        portfolio_U[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+lag_portfolio_U <- lag(portfolio_U, k=1)
+lag_portfolio_D <- lag(portfolio_D, k=1)
+
+
+#Calculate mean returns for U
+for (i in 1:384){
+  returns_U <- returns[,1:i]*(as.numeric(lag_portfolio_U[,1:i]))
+} 
+View(returns_U)
+
+#Calculate mean returns for D
+for (i in 1:384){
+  returns_D <- returns[,1:i]*(as.numeric(lag_portfolio_D[,1:i]))
+} 
+View(returns_D)
+
+returns_UD <- returns_U - returns_D
+View(returns_LH)
+
+
+
+
+####### 13.
+
 
 
 
@@ -302,4 +396,24 @@ print(SR_portfolio)
 #################
 ###  Ex 5.3  ###
 #################
+
+
+
+
+
+
+
+
+#################
+### COMMENTS ###
+#################
+
+# 1. Remove negative Book Values
+# 2. Use Log on riskfree return ?
+
+
+
+
+
+
 
