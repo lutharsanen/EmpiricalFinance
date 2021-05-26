@@ -47,7 +47,19 @@ prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted 
 returns <- Return.calculate(prices = prices_adjusted, method = 'log')
 
 book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
-#####To DO: remove book values below 0!!
+#####remove book values below 0:
+
+for (i in 1:nrow(book_values)) {
+  for(j in 1:ncol(book_values)) {
+    condition <- book_values[i,j] < 0
+    if(!is.na(condition)) {
+      if(condition) {
+        book_values[i,j] <- NA
+      }
+    }
+  }
+}
+
 
 
 shares <- xts(shares[,-1], order.by = as.Date(shares$Date, format = "%d.%m.%Y"))
@@ -94,7 +106,6 @@ for (i in 1:nrow(market_cap)) {
   }
 }
 
-print(condition)
 
 
 
@@ -613,7 +624,7 @@ print(Mean_Size_BHU)
 
 
 ####### 3.
-# Create Portfolios
+# Create factor-mimicking-portfolios
 returns_new <- returns["19910101/20191201"]
 
 for (i in 1:384){
@@ -650,7 +661,6 @@ for (i in 1:384){
 
 
 
-
 SMB <-  0.25*(returns_SHU-returns_BHU+returns_SHD-returns_BHD+returns_SLU-returns_BLU+returns_SLD-returns_BLD)
 View(SMB)
 
@@ -664,7 +674,16 @@ View(MOM)
 
 
 ####### 4.
+#Mean Annualized returns
 
+Annualized_return_SMB <- (mean(rowMeans(SMB, na.rm = T), na.rm = T)+1)^(1/12)-1
+print(Annualized_return_SMB)
+
+Annualized_return_HML <- (mean(rowMeans(HML, na.rm = T), na.rm = T)+1)^(1/12)-1
+print(Annualized_return_HML)
+
+Annualized_return_MOM <- (mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^(1/12)-1
+print(Annualized_return_MOM)
 
 ####### 5. 
 
