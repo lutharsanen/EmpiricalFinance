@@ -368,7 +368,7 @@ for (i in 1:nrow(momentum_lagged)) {
 #lag again to prevent look-ahead bias
 lag_portfolio_U <- lag(portfolio_U, k=1)
 lag_portfolio_D <- lag(portfolio_D, k=1)
-View(lag_portfolio_D)
+View(lag_portfolio_U)
 
 returns_short <- returns["19901101/20191201"]
 
