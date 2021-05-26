@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 4")
-# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
 
 ############
 # Packages #
@@ -12,7 +12,7 @@
  # install.packages("roll")
  # install.packages("data.table")
  # install.packages("zoo")
-install.packages("portsort")
+ # install.packages("portsort")
 ###########
 
 # load libraries
@@ -40,7 +40,7 @@ factor_returns <- read.delim(file = 'A4_dataset_06.txt', header = TRUE, sep = '\
 
 
 # create time-series files and get returns from prices
-date_monthly$Date <- prices_adjusted$Date
+date_monthly <- prices_adjusted$Date
 as.data.frame(date_monthly)
 
 prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted $Date, format = "%d.%m.%Y"))
@@ -81,17 +81,12 @@ for (i in 1:384){
 }  
 
 ####### 2.
-#View(market_cap)
-for (i in 1:361){
-  medians <- as.data.frame(rowMedians(market_cap[1:i], na.rm = TRUE))
-}
 
-market_cap$Median_CAP <- medians[,1]
+# Calculate the monthly median value of the Market Capitalization
+market_cap$Median_CAP <- rowMedians(market_cap, na.rm=T)
 
-View(market_cap)
-
+# create portfolio B
 portfolio_B <- market_cap
-
 for (i in 1:nrow(market_cap)) {
   for(j in 1:ncol(market_cap)) {
     condition <- market_cap[i,ncol(market_cap)] < market_cap[i,j]
@@ -106,13 +101,9 @@ for (i in 1:nrow(market_cap)) {
   }
 }
 
-
-
-
-#We incoorporate all values equal to the median in the portfolio small.
-
+# create portfolio S
+# We incorporate all values equal to the median in the portfolio small.
 portfolio_S <- market_cap
-
 for (i in 1:nrow(market_cap)) {
   for(j in 1:ncol(market_cap)) {
     condition <- market_cap[i,ncol(market_cap)] >= market_cap[i,j]
@@ -129,33 +120,28 @@ for (i in 1:nrow(market_cap)) {
 
 
 ####### 3.
+
+# create lagged portfolios
 lag_portfolio_S <- lag(portfolio_S, k=1)
 lag_portfolio_B <- lag(portfolio_B, k=1)
-
-#View(lag_portfolio_B)
 
 #Calculate mean returns for S
 for (i in 1:384){
   returns_S <- returns[,1:i]*(as.numeric(lag_portfolio_S[,1:i]))
 } 
-#View(returns_S)
 
 #Calculate mean returns for B
 for (i in 1:384){
   returns_B <- returns[,1:i]*(as.numeric(lag_portfolio_B[,1:i]))
 } 
-#View(returns_B)
 
+# dataframe with return differences
 returns_SMB <- returns_S - returns_B
-#View(returns_SMB)
-
 
 # annualized mean return
 mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
-
 annualized_mean_return <- (((mean(mean_returns, na.rm = TRUE))+1)^(1/12)-1)*100
 annualized_mean_return
-
 
 # Plot cumulative Returns 
 mean_returns <- as.data.frame(mean_returns)
