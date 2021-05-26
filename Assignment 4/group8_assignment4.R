@@ -11,7 +11,8 @@
  # install.packages("psych")
  # install.packages("roll")
  # install.packages("data.table")
-#install.packages("zoo")
+ # install.packages("zoo")
+install.packages("portsort")
 ###########
 
 # load libraries
@@ -23,7 +24,7 @@ library(data.table)
 library(ggplot2)
 library(matrixStats)
 library(zoo)
-
+library(portsort)
 
 ###############
 # Data import #
@@ -46,7 +47,19 @@ prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted 
 returns <- Return.calculate(prices = prices_adjusted, method = 'log')
 
 book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
-#####To DO: remove book values below 0!!
+#####remove book values below 0:
+
+for (i in 1:nrow(book_values)) {
+  for(j in 1:ncol(book_values)) {
+    condition <- book_values[i,j] < 0
+    if(!is.na(condition)) {
+      if(condition) {
+        book_values[i,j] <- NA
+      }
+    }
+  }
+}
+
 
 
 shares <- xts(shares[,-1], order.by = as.Date(shares$Date, format = "%d.%m.%Y"))
@@ -93,7 +106,6 @@ for (i in 1:nrow(market_cap)) {
   }
 }
 
-print(condition)
 
 
 
@@ -196,9 +208,9 @@ View(book_to_market)
 
 portfolio_H <- book_to_market
 
-for (i in 1:nrow(portfolio_H)) {
-  for(j in 1:ncol(portfolio_H)) {
-    condition <- portfolio_H[i,ncol(portfolio_H)] < portfolio_H[i,j]
+for (i in 1:nrow(book_to_market)) {
+  for(j in 1:ncol(book_to_market)) {
+    condition <- book_to_market[i,ncol(book_to_market)] < book_to_market[i,j]
     if(!is.na(condition)) {
       if(condition) {
         portfolio_H[i,j] <- 1
@@ -214,9 +226,9 @@ for (i in 1:nrow(portfolio_H)) {
 
 portfolio_L <- book_to_market
 
-for (i in 1:nrow(portfolio_L)) {
-  for(j in 1:ncol(portfolio_L)) {
-    condition <- portfolio_L[i,ncol(portfolio_L)] >= portfolio_L[i,j]
+for (i in 1:nrow(book_to_market)) {
+  for(j in 1:ncol(book_to_market)) {
+    condition <- book_to_market[i,ncol(book_to_market)] >= book_to_market[i,j]
     if(!is.na(condition)) {
       if(condition) {
         portfolio_L[i,j] <- 1
@@ -299,35 +311,31 @@ View(returns_company)
 
 
 ####### 11.
-#t-12 to t-1 past returns
-
-rolling_returns <- returns
-rolling_returns<-roll_mean(returns, width = 11)
-#add 1 lag
-rolling_returns_lag <- lag(rolling_returns, k=1)
-
-
-#ODER ???
-rolling_returns <- returns
-rolling_returns<-roll_mean(returns, width = 12)
+#install.packages("TTR")
+library(TTR)
+momentum <- ROC(prices_adjusted, n = 11, type =  "discrete", na.pad = F)
+View(momentum)
 
 
 ####### 12.
 
 
-for (i in 1:nrow(rolling_returns)){
-  medians_3 <- as.data.frame(rowMedians(rolling_returns[1:i], na.rm = TRUE))
+for (i in 1:nrow(momentum)){
+  medians_3 <- as.data.frame(rowMedians(momentum[1:i], na.rm = TRUE))
 }
 
-#View(medians_3)
+View(medians_3)
 
-rolling_returns$medians3 <- medians_3[,1]
+momentum$medians3 <- medians_3[,1]
 
-portfolio_D <- rolling_returns #go short on Loser Comapnies D
+momentum_lagged <- lag(momentum, k=1)
+  
+  
+portfolio_D <- momentum_lagged #go short on Loser Comapnies D
 
-for (i in 1:nrow(portfolio_D)) {
-  for(j in 1:ncol(portfolio_D)) {
-    condition <- portfolio_D[i,ncol(portfolio_D)] >= portfolio_D[i,j] # loser stocks median is bigger or equal to value
+for (i in 1:nrow(momentum_lagged)) {
+  for(j in 1:ncol(momentum_lagged)) {
+    condition <- momentum_lagged[i,ncol(momentum_lagged)] >= momentum_lagged[i,j] # loser stocks median is bigger or equal to value
     if(!is.na(condition)) {
       if(condition) {
         portfolio_D[i,j] <- 1
@@ -341,11 +349,11 @@ for (i in 1:nrow(portfolio_D)) {
 
 
 
-portfolio_U <- rolling_returns #go long on Winner Comapnies U
+portfolio_U <- momentum_lagged #go long on Winner Comapnies U
 
-for (i in 1:nrow(portfolio_U)) {
-  for(j in 1:ncol(portfolio_U)) {
-    condition <- portfolio_U[i,ncol(portfolio_U)] < portfolio_U[i,j] #Winner portfolio median is smaller than values
+for (i in 1:nrow(momentum_lagged)) {
+  for(j in 1:ncol(momentum_lagged)) {
+    condition <- momentum_lagged[i,ncol(momentum_lagged)] < momentum_lagged[i,j] #Winner portfolio median is smaller than values
     if(!is.na(condition)) {
       if(condition) {
         portfolio_U[i,j] <- 1
@@ -357,31 +365,65 @@ for (i in 1:nrow(portfolio_U)) {
   }
 }
 
-
+#lag again to prevent look-ahead bias
 lag_portfolio_U <- lag(portfolio_U, k=1)
 lag_portfolio_D <- lag(portfolio_D, k=1)
+View(lag_portfolio_D)
 
+returns_short <- returns["19901101/20191201"]
 
 #Calculate mean returns for U
 for (i in 1:384){
-  returns_U <- returns[,1:i]*(as.numeric(lag_portfolio_U[,1:i]))
+  returns_U <- returns_short[,1:i]*(as.numeric(lag_portfolio_U[,1:i]))
 } 
 View(returns_U)
 
 #Calculate mean returns for D
 for (i in 1:384){
-  returns_D <- returns[,1:i]*(as.numeric(lag_portfolio_D[,1:i]))
+  returns_D <- returns_short[,1:i]*(as.numeric(lag_portfolio_D[,1:i]))
 } 
 View(returns_D)
 
-returns_UD <- returns_U - returns_D
-View(returns_LH)
-
-
-
-
 ####### 13.
 
+returns_UD <- returns_U - returns_D
+View(returns_UD)
+
+
+# annualized mean return
+mean_returns_UD <- rowMeans(returns_UD, na.rm = TRUE)
+
+annualized_mean_return_UD <- (((mean(mean_returns_UD, na.rm = TRUE))+1)^(1/12)-1)*100
+annualized_mean_return_UD
+
+# Plot cumulative Returns 
+mean_returns_UD <- as.data.frame(mean_returns_UD)
+View(mean_returns_UD)
+mean_returns_UD_short <- mean_returns_UD[3:nrow(mean_returns_UD),, drop=F]
+View(mean_returns_UD_short) #348 entries
+
+View(date_monthly)
+Date_UD <- date_monthly[14:nrow(date_monthly),, drop=F] #from 01.01.91
+View(Date_UD)#348 entries
+
+cumulative_returns_UD <- cumprod(1+mean_returns_UD_short)
+
+cum_returns_UD <- cbind(Date_UD, cumulative_returns_UD)
+cum_returns_UD$Date <- as.Date(cum_returns_UD$date_monthly , format = "%d.%m.%Y")
+View(cum_returns_UD)
+
+plot(cum_returns_UD$Date, cum_returns_UD$mean_returns_UD, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+
+# Calculate Sharpe Ratio
+
+#riskfreerate <- mean(riskfree) #annualized rsikfree
+
+mean_returns_UD_short$annualized_returns_UD <- ((mean_returns_UD_short$mean_returns_UD+1)^(1/12)-1)*100
+
+SD_portfolio <- sd(mean_returns_UD_short$annualized_returns_UD) #is that correct ??
+
+SR_portfolio <- (annualized_mean_return_UD-riskfreerate)/SD_portfolio
+print(SR_portfolio) 
 
 
 
@@ -389,6 +431,261 @@ View(returns_LH)
 ###  Ex 5.2  ###
 #################
 
+
+
+####### 1.
+portfolio_S_new <- portfolio_S["19910101/20191201"]
+portfolio_B_new <- portfolio_B["19910101/20191201"]
+portfolio_H_new <- portfolio_H["19910101/20191201"]
+portfolio_L_new <- portfolio_L["19910101/20191201"]
+portfolio_U_new <- portfolio_U["19910101/20191201"]
+portfolio_D_new <- portfolio_D["19910101/20191201"]
+
+
+SHU_sums <- portfolio_S_new + portfolio_H_new + portfolio_U_new
+SHU <- SHU_sums
+for (i in 1:nrow(SHU_sums)) {
+  for(j in 1:384) {
+    condition <-  SHU_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        SHU[i,j] <- 1
+      }
+      else {
+        SHU[i,j] <- 0
+      } 
+    }
+  }
+}
+#View(SHU)
+
+SLU_sums <- portfolio_S_new + portfolio_L_new + portfolio_U_new
+SLU <- SLU_sums
+for (i in 1:nrow(SLU_sums)) {
+  for(j in 1:384) {
+    condition <-  SLU_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        SLU[i,j] <- 1
+      }
+      else {
+        SLU[i,j] <- 0
+      } 
+    }
+  }
+}
+
+SLD_sums <- portfolio_S_new + portfolio_L_new + portfolio_D_new
+SLD <- SLD_sums
+for (i in 1:nrow(SLD_sums)) {
+  for(j in 1:384) {
+    condition <-  SLD_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        SLD[i,j] <- 1
+      }
+      else {
+        SLD[i,j] <- 0
+      } 
+    }
+  }
+}
+
+SHD_sums <- portfolio_S_new + portfolio_H_new + portfolio_D_new
+SHD <- SHD_sums
+for (i in 1:nrow(SHD_sums)) {
+  for(j in 1:384) {
+    condition <-  SHD_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        SHD[i,j] <- 1
+      }
+      else {
+        SHD[i,j] <- 0
+      } 
+    }
+  }
+}
+
+BLD_sums <- portfolio_B_new + portfolio_L_new + portfolio_D_new
+BLD <- BLD_sums
+for (i in 1:nrow(BLD_sums)) {
+  for(j in 1:384) {
+    condition <-  BLD_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        BLD[i,j] <- 1
+      }
+      else {
+        BLD[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+BHD_sums <- portfolio_B_new + portfolio_H_new + portfolio_D_new
+BHD <- BHD_sums
+for (i in 1:nrow(BHD_sums)) {
+  for(j in 1:384) {
+    condition <-  BHD_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        BHD[i,j] <- 1
+      }
+      else {
+        BHD[i,j] <- 0
+      } 
+    }
+  }
+}
+
+BLU_sums <- portfolio_B_new + portfolio_L_new + portfolio_U_new
+BLU <- BLU_sums
+for (i in 1:nrow(BLU_sums)) {
+  for(j in 1:384) {
+    condition <-  BLU_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        BLU[i,j] <- 1
+      }
+      else {
+        BLU[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+BHU_sums <- portfolio_B_new + portfolio_H_new + portfolio_U_new
+BHU <- BHU_sums
+for (i in 1:nrow(BHU_sums)) {
+  for(j in 1:384) {
+    condition <-  BHU_sums[i,j] == 3
+    if(!is.na(condition)) {
+      if(condition) {
+        BHU[i,j] <- 1
+      }
+      else {
+        BHU[i,j] <- 0
+      } 
+    }
+  }
+}
+
+
+
+#lag to prevent look-ahead bias
+SHU_lag <- lag(SHU, k=1)
+SLU_lag <- lag(SLU, k=1)
+SLD_lag <- lag(SLD, k=1)
+SHD_lag <- lag(SHD, k=1)
+BLD_lag <- lag(BLD, k=1)
+BHD_lag <- lag(BHD, k=1)
+BLU_lag <- lag(BLU, k=1)
+BHU_lag <- lag(BHU, k=1)
+
+#View(BHD_lag)
+
+####### 2.
+
+#Mean size of the portfolios
+Row_sum_SHU <- rowSums(SHU_lag, na.rm = T)
+Mean_Size_SHU <- mean(Row_sum_SHU/nrow(SHU_lag))
+print(Mean_Size_SHU)
+
+Row_sum_SLU <- rowSums(SLU_lag, na.rm = T)
+Mean_Size_SLU <- mean(Row_sum_SLU/nrow(SLU_lag))
+print(Mean_Size_SLU)
+
+Row_sum_SLD <- rowSums(SLD_lag, na.rm = T)
+Mean_Size_SLD <- mean(Row_sum_SLD/nrow(SLD_lag))
+print(Mean_Size_SLD)
+
+Row_sum_SHD <- rowSums(SHD_lag, na.rm = T)
+Mean_Size_SHD <- mean(Row_sum_SHD/nrow(SHD_lag))
+print(Mean_Size_SHD)
+
+Row_sum_BLD <- rowSums(BLD_lag, na.rm = T)
+Mean_Size_BLD <- mean(Row_sum_BLD/nrow(BLD_lag))
+print(Mean_Size_BLD)
+
+Row_sum_BHD <- rowSums(BHD_lag, na.rm = T)
+Mean_Size_BHD <- mean(Row_sum_BHD/nrow(BHD_lag))
+print(Mean_Size_BHD)
+
+Row_sum_BLU <- rowSums(BLU_lag, na.rm = T)
+Mean_Size_BLU <- mean(Row_sum_BLU/nrow(BLU_lag))
+print(Mean_Size_BLU)
+
+Row_sum_BHU <- rowSums(BHU_lag, na.rm = T)
+Mean_Size_BHU <- mean(Row_sum_BHU/nrow(BHU_lag))
+print(Mean_Size_BHU)
+
+
+####### 3.
+# Create factor-mimicking-portfolios
+returns_new <- returns["19910101/20191201"]
+
+for (i in 1:384){
+  returns_SHU <- returns_new[,1:i]*(as.numeric(SHU_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_SLU <- returns_new[,1:i]*(as.numeric(SLU_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_SLD <- returns_new[,1:i]*(as.numeric(SLD_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_SHD <- returns_new[,1:i]*(as.numeric(SHD_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_BLD <- returns_new[,1:i]*(as.numeric(BLD_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_BHD <- returns_new[,1:i]*(as.numeric(BHD_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_BLU <- returns_new[,1:i]*(as.numeric(BLU_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_BHU <- returns_new[,1:i]*(as.numeric(BHU_lag[,1:i]))
+} 
+
+
+
+SMB <-  0.25*(returns_SHU-returns_BHU+returns_SHD-returns_BHD+returns_SLU-returns_BLU+returns_SLD-returns_BLD)
+View(SMB)
+
+
+HML <- 0.25*(returns_SHU-returns_SLU+returns_SHD-returns_SLD+returns_BHU-returns_BLU+returns_BHD-returns_BLD)
+View(HML)
+
+
+MOM <- 0.25*(returns_SHU-returns_SHD+returns_SLU-returns_SLD+returns_BHU-returns_BHD+returns_BLU-returns_BLD)
+View(MOM)
+
+
+####### 4.
+#Mean Annualized returns
+
+Annualized_return_SMB <- (mean(rowMeans(SMB, na.rm = T), na.rm = T)+1)^(1/12)-1
+print(Annualized_return_SMB)
+
+Annualized_return_HML <- (mean(rowMeans(HML, na.rm = T), na.rm = T)+1)^(1/12)-1
+print(Annualized_return_HML)
+
+Annualized_return_MOM <- (mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^(1/12)-1
+print(Annualized_return_MOM)
+
+####### 5. 
 
 
 
