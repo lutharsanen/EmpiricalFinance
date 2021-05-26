@@ -1,6 +1,10 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 1")
+<<<<<<< Updated upstream
 # setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 1")
+=======
+# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 1")
+>>>>>>> Stashed changes
 
 ############
 # Packages #
@@ -9,7 +13,11 @@
 # install.packages("xts")
 # install.packages("PerformanceAnalytics")
 # install.packages("psych")
+<<<<<<< Updated upstream
 # install.packages("roll")
+=======
+install.packages("roll")
+>>>>>>> Stashed changes
 ###########
 
 # load libraries
@@ -33,20 +41,54 @@ View(prices[,1])
 View(prices[1,])
 View(prices[1,1])
 
+<<<<<<< Updated upstream
 
 
+=======
+<<<<<<< HEAD
+
+
+###########################################################################################################
+#Exercise 5.2
+#make time series data
+date <- as.Date(prices[,1])
+prices.ts <- xts(x = prices[,-1], order.by = date)
+head(prices.ts)
+View(prices.ts)
+
+date <- as.Date(returns[,1])
+returns.ts <- xts(x = returns[,-1], order.by = date)
+head(returns.ts)
+View(returns.ts)
+
+date <- as.Date(interest_rates[,1])
+interest_rates_ts <- xts(x = interest_rates[,-1], order.by = date)
+head(interest_rates_ts)
+View(interest_rates_ts)
+
+#5.2.1 Calculate Sharp Ratio and SD of the first stock in Dataset 2 using 1-year Swiss Gov. Bond as risk free rate, see Dataset 3
+=======
+>>>>>>> Stashed changes
 #################
 ###  Ex 5.1  ###
 #################
 
+<<<<<<< Updated upstream
 ####### 1.
+=======
+# i)
+>>>>>>> Stashed changes
 
 date <- as.Date(prices[,1])
 prices.ts <- xts(x = prices[,-1], order.by = date)
 returns_results <- Return.calculate(prices = prices.ts, method = 'discrete')
 
+<<<<<<< Updated upstream
 
 ####### 2.
+=======
+# ii)
+>>>>>>> Stashed changes
 portfolio_EW_returns <- rowMeans(returns_results, na.rm=TRUE)
 portfolio_EW_returnsts <- xts(portfolio_EW_returns, order.by = date)
 
@@ -56,6 +98,7 @@ mean_return_EW <- mean(portfolio_EW)
 pf_annualized_EW <- (((1+mean_return_EW)^12)-1)
 
 
+<<<<<<< Updated upstream
 ####### 3.
 
 MC_monthly <- xts(x = market_values[,-1], order.by = date)
@@ -81,6 +124,32 @@ max_ubs <-VW_weights[which.max(VW_weights$UBS_I),]
 print(max_ubs$UBS_I)
 
 ### b)
+=======
+#iii)
+
+# a)
+
+max_novartis <-market_values[which.max(market_values$Novartis_I),]
+print(max_novartis[c("Date","Novartis_I")])
+
+max_nestle <-market_values[which.max(market_values$Nestle_I),]
+print(max_nestle[c("Date","Nestle_I")])
+
+max_roche <-market_values[which.max(market_values$Roche_Holding),]
+print(max_roche[c("Date","Roche_Holding")])
+
+max_ubs <-market_values[which.max(market_values$UBS_I),]
+print(max_ubs[c("Date","UBS_I")])
+
+# b)
+
+MC_monthly <- xts(x = market_values[,-1], order.by = date)
+# Create a vector of the total market cap of the index for a given month
+totMC_monthly <- rowSums(MC_monthly, na.rm = TRUE)
+
+#Compute weights
+VW_weights <- MC_monthly / totMC_monthly
+>>>>>>> Stashed changes
 
 #Lag marketcap
 lag_VW_weights <- lag.xts(VW_weights, 1)
@@ -98,12 +167,19 @@ portfolio_VW <- portfolio_VW_returnsts[-1,]
 mean_return_VW <- mean(portfolio_VW)
 pf_annualized_VW <- (((1+mean_return_VW)^12)-1)
 
+<<<<<<< Updated upstream
 
 ###### 4.
 
 ### a)
 
 # print cumulative return from startdate (first date) to end date (second date)
+=======
+#4
+
+#a)
+
+>>>>>>> Stashed changes
 print(prod(1 + portfolio_VW['1988-06-30/2000-12-29']))
 print(prod(1 + portfolio_EW['1988-06-30/2000-12-29']))
 
@@ -119,6 +195,7 @@ print(prod(1 + portfolio_EW['2007-05-31/2017-12-29']))
 print(prod(1 + portfolio_VW['2011-08-31/2020-01-31']))
 print(prod(1 + portfolio_EW['2011-08-31/2020-01-31']))
 
+<<<<<<< Updated upstream
 ### d)
 
 print(prod(1 + portfolio_VW['2007-05-31/2017-12-29']))
@@ -132,6 +209,10 @@ print(prod(1 + portfolio_EW['2020-02-28/2020-12-31']))
 ### f)
 
 # calculate max drawdown from start date to end date
+=======
+#f)
+
+>>>>>>> Stashed changes
 maxDrawdown(portfolio_VW['1988-06-30/2000-12-29'])
 maxDrawdown(portfolio_EW['1988-06-30/2000-12-29'])
 
@@ -141,6 +222,7 @@ maxDrawdown(portfolio_EW['2000-12-29/2020-01-31'])
 maxDrawdown(portfolio_VW['2020-02-28/2021-02-26'])
 maxDrawdown(portfolio_EW['2020-02-28/2021-02-26'])
 
+<<<<<<< Updated upstream
 
 ###### 5.
 
@@ -183,11 +265,15 @@ lines(date[0:391], cum_ret_portfolio_adj[2:392], type = "l", lty = 1, lwd =3, co
 legend("topleft", legend = c("inflation", "non-inflation"), lty = 1, lwd = 3, col = c("blue","black"))
 
 
+=======
+#5
+>>>>>>> Stashed changes
 
 #################
 ###  Ex 5.2  ###
 #################
 
+<<<<<<< Updated upstream
 date <- as.Date(returns[,1])
 returns.ts <- xts(x = returns[,-1], order.by = date)
 head(returns.ts)
@@ -200,6 +286,10 @@ head(interest_rates_ts)
 ###### 1.
 
 # Calculate Sharp Ratio and SD of the first stock in Dataset 2 using 1-year Swiss Gov. Bond as risk free rate, see Dataset 3
+=======
+#1. Calculate Sharp Ratio and SD of the first stock in Dataset 2 using 1-year Swiss Gov. Bond as risk free rate, see Dataset 3
+>>>>>>> 0a56054c2672130ffac158feef4469e85536d2c6
+>>>>>>> Stashed changes
 
 #Mean Return
 mean_return_stock <- mean(rowMeans(returns.ts[,1], na.rm = TRUE), na.rm = TRUE)
@@ -212,6 +302,10 @@ riskfree <- mean (annual_rf/100, na.rm=TRUE)
 riskfree
 
 #rolling SD
+<<<<<<< Updated upstream
+=======
+#subset last 12 observation periods
+>>>>>>> Stashed changes
 SD_stock <- mean(roll_sd(rowMeans(returns.ts[,1],na.rm=TRUE),12,na_restore=TRUE),na.rm=TRUE)*12^0.5
 SD_stock
 
@@ -220,18 +314,39 @@ SR_stock
 
 
 
+<<<<<<< Updated upstream
 
 
 ###### 2.
 
 
+=======
+<<<<<<< HEAD
+###########################################################################################################
+#5.2.2
+=======
+
+
+###########################################################################################################
+>>>>>>> 0a56054c2672130ffac158feef4469e85536d2c6
+>>>>>>> Stashed changes
 #Portfolio with 25 stocks
 #Mean Returns
 mean_return_portfolio25 <- mean(rowMeans(returns.ts[,1:25], na.rm = TRUE), na.rm = TRUE)
 return_annualized_portfolio25 <- Return.annualized(mean_return_portfolio25, scale = 12, geometric = TRUE)
 return_annualized_portfolio25
 
+<<<<<<< Updated upstream
 #rolling SD
+=======
+#risk free mean return
+annual_rf <- interest_rates_ts[,2]
+riskfree <- mean (monthly_rf/100, na.rm=TRUE)
+riskfree
+
+#rolling SD
+#subset last 12 observation periods
+>>>>>>> Stashed changes
 
 SD_portfolio25 <- mean(roll_sd(rowMeans(returns.ts[,1:25],na.rm=TRUE),12,na_restore=TRUE),na.rm=TRUE)*12^0.5
 SD_portfolio25
@@ -239,9 +354,23 @@ SD_portfolio25
 SR_portfolio25 <- (return_annualized_portfolio25-riskfree)/SD_portfolio25
 SR_portfolio25
 
+<<<<<<< Updated upstream
 #make a loop
 
 
+=======
+<<<<<<< HEAD
+=======
+
+###########################################################################################################
+#make a loop
+
+
+annual_rf <- interest_rates_ts[,2]
+riskfree <- mean (monthly_rf/100, na.rm=TRUE)
+riskfree
+
+>>>>>>> Stashed changes
 for (i in seq(1,25,2)){
   mean_return_portfolio <- mean(rowMeans(returns.ts[,1:i], na.rm = TRUE), na.rm = TRUE)
   print(paste("Mean", i, ":", mean_return_portfolio))
@@ -253,6 +382,10 @@ for (i in seq(1,25,2)){
   print(paste("SR",i,":",SR_portfolio))
 }
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 for (i in seq(30,60,5)){
   mean_return_portfolio <- mean(rowMeans(returns.ts[,1:i], na.rm = TRUE), na.rm = TRUE)
   print(paste("Mean", i, ":", mean_return_portfolio))
@@ -265,17 +398,26 @@ for (i in seq(30,60,5)){
 }
 
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 #################
 ###  Ex 5.3  ###
 #################
 
+<<<<<<< Updated upstream
 ###### 1. 
 
 # no code required
 
 
 ###### 2.
+=======
+# i) no code required
+
+# ii)
+>>>>>>> Stashed changes
 
 # calculate annualized standard deviation for equal and value weighted returns
 pf_annualized_std_EW <- sd(portfolio_EW)*sqrt(12)
@@ -303,11 +445,17 @@ VR_VW_24 <- (var(pf_VW_24-1,na.rm=T)/var(pf_VW_12-1,na.rm=T))*(12/24)
 VR_VW_36 <- (var(pf_VW_36-1,na.rm=T)/var(pf_VW_12-1,na.rm=T))*(12/36)
 VR_VW_48 <- (var(pf_VW_48-1,na.rm=T)/var(pf_VW_12-1,na.rm=T))*(12/48)
 
+<<<<<<< Updated upstream
 ###### 3.
 
 # no code required
 
 ###### 4.
+=======
+# iii) no code required
+
+# iv)
+>>>>>>> Stashed changes
 
 # calculate log returns and repeat ii)
 log_portfolio_EW <- log(portfolio_EW+1)
@@ -338,3 +486,7 @@ log_VR_VW_1 <- (var(log_portfolio_VW)/var(log_pf_VW_12-1,na.rm=T))*(12/1)
 log_VR_VW_24 <- (var(log_pf_VW_24-1,na.rm=T)/var(log_pf_VW_12-1,na.rm=T))*(12/24)
 log_VR_VW_36 <- (var(log_pf_VW_36-1,na.rm=T)/var(log_pf_VW_12-1,na.rm=T))*(12/36)
 log_VR_VW_48 <- (var(log_pf_VW_48-1,na.rm=T)/var(log_pf_VW_12-1,na.rm=T))*(12/48)
+<<<<<<< Updated upstream
+=======
+>>>>>>> 0a56054c2672130ffac158feef4469e85536d2c6
+>>>>>>> Stashed changes
