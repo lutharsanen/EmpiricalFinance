@@ -139,8 +139,8 @@ for (i in 1:384){
 returns_SMB <- returns_S - returns_B
 
 # annualized mean return
-mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
-annualized_mean_return <- (((mean(mean_returns, na.rm = TRUE))+1)^(1/12)-1)*100
+returns_SMB$means <- rowMeans(returns_SMB, na.rm = TRUE)
+annualized_mean_return <- (((mean(returns_SMB["19910201/20191201",ncol(returns_SMB)]))+1)^(12)-1)
 annualized_mean_return
 
 # Plot cumulative Returns 
@@ -162,7 +162,7 @@ plot(cum_returns$Date, cum_returns$mean_returns, type = "l", lty = 1,  lwd = 3, 
 
 riskfreerate <- mean(riskfree) #annualized rsikfree
 
-mean_returns$annualized_returns <- ((mean_returns$mean_returns+1)^(1/12)-1)*100
+mean_returns$annualized_returns <- ((mean_returns$mean_returns+1)^(12)-1)
 
 SD_portfolio <- sd(mean_returns$annualized_returns) #is that correct ??
 
