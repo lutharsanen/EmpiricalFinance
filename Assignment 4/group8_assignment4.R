@@ -423,13 +423,13 @@ print(SR_portfolio)
 
 
 ####### 1.
-portfolio_S_new  <- portfolio_S["19910101/20191201"]
+portfolio_S_new <- portfolio_S["19910101/20191201"]
 portfolio_B_new <- portfolio_B["19910101/20191201"]
 portfolio_H_new <- portfolio_H["19910101/20191201"]
 portfolio_L_new <- portfolio_L["19910101/20191201"]
 portfolio_U_new <- portfolio_U["19910101/20191201"]
 portfolio_D_new <- portfolio_D["19910101/20191201"]
-returns_new <- returns["19910101/20191201"]
+
 
 SHU_sums <- portfolio_S_new + portfolio_H_new + portfolio_U_new
 SHU <- SHU_sums
@@ -446,7 +446,7 @@ for (i in 1:nrow(SHU_sums)) {
     }
   }
 }
-View(SHU)
+#View(SHU)
 
 SLU_sums <- portfolio_S_new + portfolio_L_new + portfolio_U_new
 SLU <- SLU_sums
@@ -564,26 +564,115 @@ for (i in 1:nrow(BHU_sums)) {
 
 
 
+#lag to prevent look-ahead bias
+SHU_lag <- lag(SHU, k=1)
+SLU_lag <- lag(SLU, k=1)
+SLD_lag <- lag(SLD, k=1)
+SHD_lag <- lag(SHD, k=1)
+BLD_lag <- lag(BLD, k=1)
+BHD_lag <- lag(BHD, k=1)
+BLU_lag <- lag(BLU, k=1)
+BHU_lag <- lag(BHU, k=1)
 
-portfolio.turnover(BHU) #ERROR: Please input the portfolio list object from the output of one of the conditional or unconditional sorting functions
-
-conditional.sort(Fa,Fb=NULL,Fc=NULL,R.Forward,dimA,dimB=NULL,dimC=NULL,type = 7)
-
-dimA = c(0,0.5,1)
-dimB = c(0,0.5,1)
-dimC = c(0,0.5,1)
-sort.output <- conditional.sort(portfolio_S_new, portfolio_H_new, portfolio_U_new, returns_new,dimA, dimB, dimC)
-R.Forward = Factors[[1]]; R.Lag = Factors[[2]]; V.Lag = Factors[[3]]
-sort.output <- conditional.sort(market_cap, returns_new,dimA, R.Forward = R.Forward)
-
-
-
+#View(BHD_lag)
 
 ####### 2.
 
+#Mean size of the portfolios
+Row_sum_SHU <- rowSums(SHU_lag, na.rm = T)
+Mean_Size_SHU <- mean(Row_sum_SHU/nrow(SHU_lag))
+print(Mean_Size_SHU)
+
+Row_sum_SLU <- rowSums(SLU_lag, na.rm = T)
+Mean_Size_SLU <- mean(Row_sum_SLU/nrow(SLU_lag))
+print(Mean_Size_SLU)
+
+Row_sum_SLD <- rowSums(SLD_lag, na.rm = T)
+Mean_Size_SLD <- mean(Row_sum_SLD/nrow(SLD_lag))
+print(Mean_Size_SLD)
+
+Row_sum_SHD <- rowSums(SHD_lag, na.rm = T)
+Mean_Size_SHD <- mean(Row_sum_SHD/nrow(SHD_lag))
+print(Mean_Size_SHD)
+
+Row_sum_BLD <- rowSums(BLD_lag, na.rm = T)
+Mean_Size_BLD <- mean(Row_sum_BLD/nrow(BLD_lag))
+print(Mean_Size_BLD)
+
+Row_sum_BHD <- rowSums(BHD_lag, na.rm = T)
+Mean_Size_BHD <- mean(Row_sum_BHD/nrow(BHD_lag))
+print(Mean_Size_BHD)
+
+Row_sum_BLU <- rowSums(BLU_lag, na.rm = T)
+Mean_Size_BLU <- mean(Row_sum_BLU/nrow(BLU_lag))
+print(Mean_Size_BLU)
+
+Row_sum_BHU <- rowSums(BHU_lag, na.rm = T)
+Mean_Size_BHU <- mean(Row_sum_BHU/nrow(BHU_lag))
+print(Mean_Size_BHU)
+
+        returns_new <- returns["19910101/20191201"]
+        
+        #Calculate mean returns for U
+        for (i in 1:384){
+          returns_U <- returns_new[,1:i]*(as.numeric(lag_portfolio_U[,1:i]))
+        } 
+        View(returns_U)
+        
+        #Calculate mean returns for D
+        for (i in 1:384){
+          returns_D <- returns_short[,1:i]*(as.numeric(lag_portfolio_D[,1:i]))
+        } 
+        View(returns_D)
+        
+        
+        
+        returns_UD <- returns_U - returns_D
+        View(returns_UD)
+
+
 
 ####### 3.
+# Create Portfolios
+returns_new <- returns["19910101/20191201"]
 
+for (i in 1:384){
+  returns_SHU <- returns_new[,1:i]*(as.numeric(SHU_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_SLU <- returns_new[,1:i]*(as.numeric(SLU_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_SLD <- returns_new[,1:i]*(as.numeric(SLD_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_SHD <- returns_new[,1:i]*(as.numeric(SHD_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_BLD <- returns_new[,1:i]*(as.numeric(BLD_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_BHD <- returns_new[,1:i]*(as.numeric(BHD_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_BLU <- returns_new[,1:i]*(as.numeric(BLU_lag[,1:i]))
+} 
+
+for (i in 1:384){
+  returns_BHU <- returns_new[,1:i]*(as.numeric(BHU_lag[,1:i]))
+} 
+
+
+
+
+SMB <-  returns_SHU-returns_BHU+returns_SHD-returns_BHD+returns_SLU-returns_BLU+returns_SLD-returns_BLD
+View(SMB)
 
 ####### 4.
 
