@@ -662,27 +662,27 @@ for (i in 1:384){
 
 
 SMB <-  0.25*(returns_SHU-returns_BHU+returns_SHD-returns_BHD+returns_SLU-returns_BLU+returns_SLD-returns_BLD)
-View(SMB)
+#View(SMB)
 
 
 HML <- 0.25*(returns_SHU-returns_SLU+returns_SHD-returns_SLD+returns_BHU-returns_BLU+returns_BHD-returns_BLD)
-View(HML)
+#View(HML)
 
 
 MOM <- 0.25*(returns_SHU-returns_SHD+returns_SLU-returns_SLD+returns_BHU-returns_BHD+returns_BLU-returns_BLD)
-View(MOM)
+#View(MOM)
 
 
 ####### 4.
 #Mean Annualized returns
 
-Annualized_return_SMB <- (mean(rowMeans(SMB, na.rm = T), na.rm = T)+1)^(1/12)-1
+Annualized_return_SMB <- ((mean(rowMeans(SMB, na.rm = T), na.rm = T)+1)^(1/12)-1)*100
 print(Annualized_return_SMB)
 
-Annualized_return_HML <- (mean(rowMeans(HML, na.rm = T), na.rm = T)+1)^(1/12)-1
+Annualized_return_HML <- ((mean(rowMeans(HML, na.rm = T), na.rm = T)+1)^(1/12)-1)*100
 print(Annualized_return_HML)
 
-Annualized_return_MOM <- (mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^(1/12)-1
+Annualized_return_MOM <- ((mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^(1/12)-1)*100
 print(Annualized_return_MOM)
 
 ####### 5. 
