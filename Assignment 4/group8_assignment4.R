@@ -197,9 +197,9 @@ View(book_to_market)
 
 portfolio_H <- book_to_market
 
-for (i in 1:nrow(portfolio_H)) {
-  for(j in 1:ncol(portfolio_H)) {
-    condition <- portfolio_H[i,ncol(portfolio_H)] < portfolio_H[i,j]
+for (i in 1:nrow(book_to_market)) {
+  for(j in 1:ncol(book_to_market)) {
+    condition <- book_to_market[i,ncol(book_to_market)] < book_to_market[i,j]
     if(!is.na(condition)) {
       if(condition) {
         portfolio_H[i,j] <- 1
@@ -215,9 +215,9 @@ for (i in 1:nrow(portfolio_H)) {
 
 portfolio_L <- book_to_market
 
-for (i in 1:nrow(portfolio_L)) {
-  for(j in 1:ncol(portfolio_L)) {
-    condition <- portfolio_L[i,ncol(portfolio_L)] >= portfolio_L[i,j]
+for (i in 1:nrow(book_to_market)) {
+  for(j in 1:ncol(book_to_market)) {
+    condition <- book_to_market[i,ncol(book_to_market)] >= book_to_market[i,j]
     if(!is.na(condition)) {
       if(condition) {
         portfolio_L[i,j] <- 1
@@ -322,9 +322,9 @@ momentum_lagged <- lag(momentum, k=1)
   
 portfolio_D <- momentum_lagged #go short on Loser Comapnies D
 
-for (i in 1:nrow(portfolio_D)) {
-  for(j in 1:ncol(portfolio_D)) {
-    condition <- portfolio_D[i,ncol(portfolio_D)] >= portfolio_D[i,j] # loser stocks median is bigger or equal to value
+for (i in 1:nrow(momentum_lagged)) {
+  for(j in 1:ncol(momentum_lagged)) {
+    condition <- momentum_lagged[i,ncol(momentum_lagged)] >= momentum_lagged[i,j] # loser stocks median is bigger or equal to value
     if(!is.na(condition)) {
       if(condition) {
         portfolio_D[i,j] <- 1
@@ -340,9 +340,9 @@ for (i in 1:nrow(portfolio_D)) {
 
 portfolio_U <- momentum_lagged #go long on Winner Comapnies U
 
-for (i in 1:nrow(portfolio_U)) {
-  for(j in 1:ncol(portfolio_U)) {
-    condition <- portfolio_U[i,ncol(portfolio_U)] < portfolio_U[i,j] #Winner portfolio median is smaller than values
+for (i in 1:nrow(momentum_lagged)) {
+  for(j in 1:ncol(momentum_lagged)) {
+    condition <- momentum_lagged[i,ncol(momentum_lagged)] < momentum_lagged[i,j] #Winner portfolio median is smaller than values
     if(!is.na(condition)) {
       if(condition) {
         portfolio_U[i,j] <- 1
@@ -610,26 +610,6 @@ print(Mean_Size_BLU)
 Row_sum_BHU <- rowSums(BHU_lag, na.rm = T)
 Mean_Size_BHU <- mean(Row_sum_BHU/nrow(BHU_lag))
 print(Mean_Size_BHU)
-
-        returns_new <- returns["19910101/20191201"]
-        
-        #Calculate mean returns for U
-        for (i in 1:384){
-          returns_U <- returns_new[,1:i]*(as.numeric(lag_portfolio_U[,1:i]))
-        } 
-        View(returns_U)
-        
-        #Calculate mean returns for D
-        for (i in 1:384){
-          returns_D <- returns_short[,1:i]*(as.numeric(lag_portfolio_D[,1:i]))
-        } 
-        View(returns_D)
-        
-        
-        
-        returns_UD <- returns_U - returns_D
-        View(returns_UD)
-
 
 
 ####### 3.
