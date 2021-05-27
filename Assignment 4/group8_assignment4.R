@@ -171,9 +171,10 @@ print(SR_portfolio_HML)
 
 
 ####### 10. 
-returns_short <- returns["19901101/20191201"]
+returns_short <- returns["1991-02-01/2019-12-01"]
 
 returns_company <- round(colMeans(returns_short, na.rm = T), digits = 6)
+print(returns_company)
 
 ####### 11.
 momentum <- ROC(prices_adjusted.ts, n = 11, type =  "discrete", na.pad = F)
