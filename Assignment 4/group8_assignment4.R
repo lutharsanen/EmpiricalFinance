@@ -41,7 +41,7 @@ factor_returns <- read.delim(file = 'A4_dataset_06.txt', header = TRUE, sep = '\
 
 # create time-series files and get returns from prices
 date_monthly <- prices_adjusted$Date
-as.data.frame(date_monthly)
+date_monthly <- as.data.frame(date_monthly)
 prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted $Date, format = "%d.%m.%Y"))
 returns <- Return.calculate(prices = prices_adjusted, method = 'log')
 book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
@@ -140,12 +140,13 @@ annualized_mean_return <- (((mean(returns_SMB["19910201/20191201",ncol(returns_S
 annualized_mean_return
 
 # Plot cumulative Returns 
+mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
 mean_returns <- as.data.frame(mean_returns)
 mean_returns <- mean_returns[2:nrow(mean_returns),, drop=F]
 Date <- date_monthly[2:nrow(date_monthly),, drop=F]
 cumulative_returns <- cumprod(1+mean_returns)
 cum_returns <- cbind(Date, cumulative_returns)
-cum_returns$Date <- as.Date(cum_returns$Date, format = "%d.%m.%Y")
+cum_returns$Date <- as.Date(cum_returns$date_monthly, format = "%d.%m.%Y")
 plot(cum_returns$Date, cum_returns$mean_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
 # Calculate Sharpe Ratio
