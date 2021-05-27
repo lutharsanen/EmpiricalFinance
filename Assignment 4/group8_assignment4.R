@@ -99,15 +99,14 @@ colnames(SMB_portfolio) <- c("PF_SMB")
 annualized_mean_return <- (mean(SMB_portfolio$PF_SMB, na.rm = T)+1)^12-1
 print(annualized_mean_return)
 
+
+
 # Plot cumulative Returns 
-mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
-mean_returns <- as.data.frame(mean_returns)
-mean_returns <- mean_returns[2:nrow(mean_returns),, drop=F]
-Date <- date_monthly[2:nrow(date_monthly),, drop=F]
-cumulative_returns <- cumprod(1+mean_returns)
+Date <- date_monthly[15:nrow(date_monthly),, drop=F]
+cumulative_returns <- cumprod(1+SMB_portfolio$PF_SMB) #doesn't work with 0
 cum_returns <- cbind(Date, cumulative_returns)
 cum_returns$Date <- as.Date(cum_returns$date_monthly, format = "%d.%m.%Y")
-plot(cum_returns$Date, cum_returns$mean_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+plot(cum_returns$Date, cum_returns$cumulative_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
 # Calculate Sharpe Ratio
 riskfreerate <- mean(riskfree) #annualized rsikfree
