@@ -227,8 +227,7 @@ print(SR_portfolio)
 
 ####### 1.
 
-# sort companies into 8 different groups
-
+# sort companies into 8 different groups (after adapting the format)
 rn <- rownames(portfolio_S)
 S <- xts(portfolio_S, order.by=as.Date(rn))
 rn <- rownames(portfolio_B)
@@ -244,109 +243,30 @@ U <- xts(portfolio_U, order.by=as.Date(rn))
 rn <- rownames(portfolio_D)
 D <- xts(portfolio_D, order.by=as.Date(rn))
 
-
-
-
 PF_SHU = S['19910101/20191201'] + H['19910101/20191201'] + U['19910101/20191201']
 SHU <- apply(PF_SHU, 2, function(x) ifelse(x == 3, 1, NA))
-
-
 
 PF_SLU = S['19910101/20191201'] + L['19910101/20191201'] + U['19910101/20191201']
 SLU <- apply(PF_SLU, 2, function(x) ifelse(x == 3, 1, NA))
 
+PF_SLD = S['19910101/20191201'] + L['19910101/20191201'] + D['19910101/20191201']
+SLD <- apply(PF_SLD, 2, function(x) ifelse(x == 3, 1, NA))
 
-SLD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(SLD)) {
-  for(j in 1:384) {
-    condition <-  SLD[i,j] == 3
-    if(!is.na(condition)) {
-      if(condition) {
-        SLD[i,j] <- 1
-      }
-      else {
-        SLD[i,j] <- 0
-      } 
-    }
-  }
-}
+PF_SHD = S['19910101/20191201'] + H['19910101/20191201'] + D['19910101/20191201']
+SHD <- apply(PF_SHD, 2, function(x) ifelse(x == 3, 1, NA))
 
-SHD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(SHD)) {
-  for(j in 1:384) {
-    condition <-  SHD[i,j] == 3
-    if(!is.na(condition)) {
-      if(condition) {
-        SHD[i,j] <- 1
-      }
-      else {
-        SHD[i,j] <- 0
-      } 
-    }
-  }
-}
+PF_BLD = B['19910101/20191201'] + L['19910101/20191201'] + D['19910101/20191201']
+BLD <- apply(PF_BLD, 2, function(x) ifelse(x == 3, 1, NA))
 
-BLD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(BLD)) {
-  for(j in 1:384) {
-    condition <-  BLD[i,j] == 3
-    if(!is.na(condition)) {
-      if(condition) {
-        BLD[i,j] <- 1
-      }
-      else {
-        BLD[i,j] <- 0
-      } 
-    }
-  }
-}
+PF_BHD = B['19910101/20191201'] + H['19910101/20191201'] + D['19910101/20191201']
+BHD <- apply(PF_BHD, 2, function(x) ifelse(x == 3, 1, NA))
 
+PF_BHU = B['19910101/20191201'] + H['19910101/20191201'] + U['19910101/20191201']
+BHU <- apply(PF_BHU, 2, function(x) ifelse(x == 3, 1, NA))
 
-BHD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(BHD)) {
-  for(j in 1:384) {
-    condition <-  BHD[i,j] == 3
-    if(!is.na(condition)) {
-      if(condition) {
-        BHD[i,j] <- 1
-      }
-      else {
-        BHD[i,j] <- 0
-      } 
-    }
-  }
-}
+PF_BLU = B['19910101/20191201'] + L['19910101/20191201'] + U['19910101/20191201']
+BLU <- apply(PF_BLU, 2, function(x) ifelse(x == 3, 1, NA))
 
-BLU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(BLU)) {
-  for(j in 1:384) {
-    condition <-  BLU[i,j] == 3
-    if(!is.na(condition)) {
-      if(condition) {
-        BLU[i,j] <- 1
-      }
-      else {
-        BLU[i,j] <- 0
-      } 
-    }
-  }
-}
-
-
-BHU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(BHU)) {
-  for(j in 1:384) {
-    condition <-  BHU[i,j] == 3
-    if(!is.na(condition)) {
-      if(condition) {
-        BHU[i,j] <- 1
-      }
-      else {
-        BHU[i,j] <- 0
-      } 
-    }
-  }
-}
 
 #lag to prevent look-ahead bias
 SHU_lag <- lag(SHU, k=1)
@@ -448,7 +368,7 @@ print(Annualized_return_SMB)
 Annualized_return_HML <- ((mean(rowMeans(HML, na.rm = T), na.rm = T)+1)^(12)-1)
 print(Annualized_return_HML)
 
-Annualized_return_MOM <- ((mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^12)-1)
+Annualized_return_MOM <- ((mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^(12)-1)
 print(Annualized_return_MOM)
 
 ####### 5. 
