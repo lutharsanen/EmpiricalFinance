@@ -244,7 +244,7 @@ Date_LH <- date_monthly[8:nrow(date_monthly),, drop=F]
 cumulative_returns_LH <- cumprod(1+mean_returns_LH)
 
 cum_returns_LH <- cbind(Date_LH, cumulative_returns_LH)
-cum_returns_LH$Date <- as.Date(cum_returns_LH$Date , format = "%d.%m.%Y")
+cum_returns_LH$Date <- as.Date(cum_returns_LH$date_monthly , format = "%d.%m.%Y")
 
 plot(cum_returns_LH$Date, cum_returns_LH$mean_returns_LH, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
@@ -376,9 +376,9 @@ print(SR_portfolio)
 # sort companies into 8 different groups
 
 SHU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(SHU_sums)) {
+for (i in 1:nrow(SHU)) {
   for(j in 1:384) {
-    condition <-  SHU_sums[i,j] == 3
+    condition <-  SHU[i,j] == 3
     if(!is.na(condition)) {
       if(condition) {
         SHU[i,j] <- 1
@@ -391,9 +391,9 @@ for (i in 1:nrow(SHU_sums)) {
 }
 
 SLU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(SLU_sums)) {
+for (i in 1:nrow(SLU)) {
   for(j in 1:384) {
-    condition <-  SLU_sums[i,j] == 3
+    condition <-  SLU[i,j] == 3
     if(!is.na(condition)) {
       if(condition) {
         SLU[i,j] <- 1
@@ -406,9 +406,9 @@ for (i in 1:nrow(SLU_sums)) {
 }
 
 SLD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(SLD_sums)) {
+for (i in 1:nrow(SLD)) {
   for(j in 1:384) {
-    condition <-  SLD_sums[i,j] == 3
+    condition <-  SLD[i,j] == 3
     if(!is.na(condition)) {
       if(condition) {
         SLD[i,j] <- 1
@@ -421,9 +421,9 @@ for (i in 1:nrow(SLD_sums)) {
 }
 
 SHD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(SHD_sums)) {
+for (i in 1:nrow(SHD)) {
   for(j in 1:384) {
-    condition <-  SHD_sums[i,j] == 3
+    condition <-  SHD[i,j] == 3
     if(!is.na(condition)) {
       if(condition) {
         SHD[i,j] <- 1
@@ -436,9 +436,9 @@ for (i in 1:nrow(SHD_sums)) {
 }
 
 BLD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(BLD_sums)) {
+for (i in 1:nrow(BLD)) {
   for(j in 1:384) {
-    condition <-  BLD_sums[i,j] == 3
+    condition <-  BLD[i,j] == 3
     if(!is.na(condition)) {
       if(condition) {
         BLD[i,j] <- 1
@@ -452,9 +452,9 @@ for (i in 1:nrow(BLD_sums)) {
 
 
 BHD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(BHD_sums)) {
+for (i in 1:nrow(BHD)) {
   for(j in 1:384) {
-    condition <-  BHD_sums[i,j] == 3
+    condition <-  BHD[i,j] == 3
     if(!is.na(condition)) {
       if(condition) {
         BHD[i,j] <- 1
@@ -467,9 +467,9 @@ for (i in 1:nrow(BHD_sums)) {
 }
 
 BLU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(BLU_sums)) {
+for (i in 1:nrow(BLU)) {
   for(j in 1:384) {
-    condition <-  BLU_sums[i,j] == 3
+    condition <-  BLU[i,j] == 3
     if(!is.na(condition)) {
       if(condition) {
         BLU[i,j] <- 1
@@ -483,9 +483,9 @@ for (i in 1:nrow(BLU_sums)) {
 
 
 BHU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(BHU_sums)) {
+for (i in 1:nrow(BHU)) {
   for(j in 1:384) {
-    condition <-  BHU_sums[i,j] == 3
+    condition <-  BHU[i,j] == 3
     if(!is.na(condition)) {
       if(condition) {
         BHU[i,j] <- 1
@@ -512,35 +512,35 @@ BHU_lag <- lag(BHU, k=1)
 
 #Mean size of the portfolios
 Row_sum_SHU <- rowSums(SHU_lag, na.rm = T)
-Mean_Size_SHU <- mean(Row_sum_SHU/nrow(SHU_lag))
+Mean_Size_SHU <- mean(Row_sum_SHU)
 print(Mean_Size_SHU)
 
 Row_sum_SLU <- rowSums(SLU_lag, na.rm = T)
-Mean_Size_SLU <- mean(Row_sum_SLU/nrow(SLU_lag))
+Mean_Size_SLU <- mean(Row_sum_SLU)
 print(Mean_Size_SLU)
 
 Row_sum_SLD <- rowSums(SLD_lag, na.rm = T)
-Mean_Size_SLD <- mean(Row_sum_SLD/nrow(SLD_lag))
+Mean_Size_SLD <- mean(Row_sum_SLD)
 print(Mean_Size_SLD)
 
 Row_sum_SHD <- rowSums(SHD_lag, na.rm = T)
-Mean_Size_SHD <- mean(Row_sum_SHD/nrow(SHD_lag))
+Mean_Size_SHD <- mean(Row_sum_SHD)
 print(Mean_Size_SHD)
 
 Row_sum_BLD <- rowSums(BLD_lag, na.rm = T)
-Mean_Size_BLD <- mean(Row_sum_BLD/nrow(BLD_lag))
+Mean_Size_BLD <- mean(Row_sum_BLD)
 print(Mean_Size_BLD)
 
 Row_sum_BHD <- rowSums(BHD_lag, na.rm = T)
-Mean_Size_BHD <- mean(Row_sum_BHD/nrow(BHD_lag))
+Mean_Size_BHD <- mean(Row_sum_BHD)
 print(Mean_Size_BHD)
 
 Row_sum_BLU <- rowSums(BLU_lag, na.rm = T)
-Mean_Size_BLU <- mean(Row_sum_BLU/nrow(BLU_lag))
+Mean_Size_BLU <- mean(Row_sum_BLU)
 print(Mean_Size_BLU)
 
 Row_sum_BHU <- rowSums(BHU_lag, na.rm = T)
-Mean_Size_BHU <- mean(Row_sum_BHU/nrow(BHU_lag))
+Mean_Size_BHU <- mean(Row_sum_BHU)
 print(Mean_Size_BHU)
 
 
