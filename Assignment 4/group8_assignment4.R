@@ -1,6 +1,6 @@
 # set working directory 
 # setwd("~/UZH/Empirical Finance/Assignment 4")
-# setwd("C:/Users/p_lae/OneDrive - Universität Zürich UZH/Dokumente/Universität Zürich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
+# setwd("C:/Users/p_lae/OneDrive - Universit?t Z?rich UZH/Dokumente/Universit?t Z?rich/12. Semester/Empirical Finance/EmpiricalFinance/Assignment 4")
 
 ############
 # Packages #
@@ -591,13 +591,13 @@ MOM <- 0.25*(returns_SHU-returns_SHD+returns_SLU-returns_SLD+returns_BHU-returns
 ####### 4.
 #Mean Annualized returns
 
-Annualized_return_SMB <- ((mean(rowMeans(SMB, na.rm = T), na.rm = T)+1)^(1/12)-1)*100
+Annualized_return_SMB <- ((mean(rowMeans(SMB, na.rm = T), na.rm = T)+1)^(12)-1)
 print(Annualized_return_SMB)
 
-Annualized_return_HML <- ((mean(rowMeans(HML, na.rm = T), na.rm = T)+1)^(1/12)-1)*100
+Annualized_return_HML <- ((mean(rowMeans(HML, na.rm = T), na.rm = T)+1)^(12)-1)
 print(Annualized_return_HML)
 
-Annualized_return_MOM <- ((mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^(1/12)-1)*100
+Annualized_return_MOM <- ((mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^12)-1)
 print(Annualized_return_MOM)
 
 ####### 5. 
