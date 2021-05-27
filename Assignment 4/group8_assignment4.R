@@ -229,35 +229,32 @@ print(SR_portfolio)
 
 # sort companies into 8 different groups
 
-SHU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(SHU)) {
-  for(j in 1:384) {
-    condition <-  SHU[i,j] == 3
-    if(!is.na(condition)) {
-      if(condition) {
-        SHU[i,j] <- 1
-      }
-      else {
-        SHU[i,j] <- 0
-      } 
-    }
-  }
-}
+rn <- rownames(portfolio_S)
+S <- xts(portfolio_S, order.by=as.Date(rn))
+rn <- rownames(portfolio_B)
+B <- xts(portfolio_B, order.by=as.Date(rn))
 
-SLU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
-for (i in 1:nrow(SLU)) {
-  for(j in 1:384) {
-    condition <-  SLU[i,j] == 3
-    if(!is.na(condition)) {
-      if(condition) {
-        SLU[i,j] <- 1
-      }
-      else {
-        SLU[i,j] <- 0
-      } 
-    }
-  }
-}
+rn <- rownames(portfolio_H)
+H <- xts(portfolio_H, order.by=as.Date(rn))
+rn <- rownames(portfolio_L)
+L <- xts(portfolio_L, order.by=as.Date(rn))
+
+rn <- rownames(portfolio_U)
+U <- xts(portfolio_U, order.by=as.Date(rn))
+rn <- rownames(portfolio_D)
+D <- xts(portfolio_D, order.by=as.Date(rn))
+
+
+
+
+PF_SHU = S['19910101/20191201'] + H['19910101/20191201'] + U['19910101/20191201']
+SHU <- apply(PF_SHU, 2, function(x) ifelse(x == 3, 1, NA))
+
+
+
+PF_SLU = S['19910101/20191201'] + L['19910101/20191201'] + U['19910101/20191201']
+SLU <- apply(PF_SLU, 2, function(x) ifelse(x == 3, 1, NA))
+
 
 SLD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(SLD)) {
