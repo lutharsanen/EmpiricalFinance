@@ -60,8 +60,11 @@ for (i in 1:nrow(book_values)) {
 
 shares <- xts(shares[,-1], order.by = as.Date(shares$Date, format = "%d.%m.%Y"))
 prices_unadjusted <- xts(prices_unadjusted[,-1], order.by = as.Date(prices_unadjusted$Date, format = "%d.%m.%Y"))
-riskfree <- xts(riskfree[,-1], order.by = as.Date(riskfree$Date, format = "%d.%m.%Y"))
 factor_returns <- xts(factor_returns[,-1], order.by = as.Date(factor_returns$Date, format = "%d.%m.%Y"))
+
+# turn riskfree into ts and divide by 100 because it is in percentages
+riskfree <- xts(riskfree[,-1], order.by = as.Date(riskfree$Date,  format = "%d.%m.%Y"))
+riskfree <- riskfree/100
 
 
 
@@ -100,6 +103,7 @@ annualized_mean_return <- (mean(SMB_portfolio$PF_SMB, na.rm = T)+1)^12-1
 print(annualized_mean_return)
 
 
+####### 3.
 
 # Plot cumulative Returns 
 Date <- date_monthly[15:nrow(date_monthly),, drop=F]
@@ -109,9 +113,8 @@ cum_returns$Date <- as.Date(cum_returns$date_monthly, format = "%d.%m.%Y")
 plot(cum_returns$Date, cum_returns$cumulative_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
 # Calculate Sharpe Ratio
-riskfreerate <- mean(riskfree) #annualized rsikfree
-mean_returns$annualized_returns <- ((mean_returns$mean_returns+1)^(12)-1)
-SD_portfolio <- sd(mean_returns$annualized_returns) #is that correct ??
+riskfreerate <- mean(riskfree['1991-02-01/2019-12-01']) #annualized risk-free
+SD_portfolio <- sd(SMB_portfolio$PF_SMB)*sqrt(12)
 SR_portfolio <- (annualized_mean_return-riskfreerate)/SD_portfolio
 print(SR_portfolio)
 
