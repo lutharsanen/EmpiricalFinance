@@ -43,7 +43,7 @@ factor_returns <- read.delim(file = 'A4_dataset_06.txt', header = TRUE, sep = '\
 date_monthly <- prices_adjusted$Date
 date_monthly <- as.data.frame(date_monthly)
 prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted $Date, format = "%d.%m.%Y"))
-returns <- Return.calculate(prices = prices_adjusted, method = 'log')
+returns <- Return.calculate(prices = prices_adjusted, method = 'discrete')
 book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
 
 # remove book values below 0:
