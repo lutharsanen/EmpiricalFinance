@@ -88,6 +88,9 @@ portfolio_S <- apply(market_cap, 2, function(S) ifelse(S <= Median_CAP, 1, NA))
 # add value of 1 to values above median and NA otherwise
 portfolio_B <- apply(market_cap, 2, function(B) ifelse(B > Median_CAP, 1, NA))
 
+
+####### 3.
+
 returns_S <- returns[2:nrow(returns),] * portfolio_S[1:nrow(returns)-1,]
 returns_B <- returns[2:nrow(returns),] * portfolio_B[1:nrow(returns)-1,]
 
@@ -101,9 +104,6 @@ SMB_portfolio <- as.data.frame(monthly_means_S - monthly_means_B)
 colnames(SMB_portfolio) <- c("PF_SMB")
 annualized_mean_return <- (mean(SMB_portfolio$PF_SMB, na.rm = T)+1)^12-1
 print(annualized_mean_return)
-
-
-####### 3.
 
 # Plot cumulative Returns 
 Date <- date_monthly[15:nrow(date_monthly),, drop=F]
@@ -129,52 +129,49 @@ for (i in 1:384){
 
 ####### 7. Calculate median and assign to portfolios
 
-for (i in 1:nrow(book_to_market)){
-  medians_2 <- as.data.frame(rowMedians(book_to_market[1:i], na.rm = TRUE))
-}
+Median_BTM <- rowMedians(book_to_market, na.rm = TRUE)
 
-book_to_market$medians2 <- medians_2[,1]
-
-portfolio_H <- book_to_market
-
-for (i in 1:nrow(book_to_market)) {
-  for(j in 1:ncol(book_to_market)) {
-    condition <- book_to_market[i,ncol(book_to_market)] < book_to_market[i,j]
-    if(!is.na(condition)) {
-      if(condition) {
-        portfolio_H[i,j] <- 1
-      }
-      else {
-        portfolio_H[i,j] <- 0
-      } 
-    }
-  }
-}
-
-portfolio_L <- book_to_market
-
-for (i in 1:nrow(book_to_market)) {
-  for(j in 1:ncol(book_to_market)) {
-    condition <- book_to_market[i,ncol(book_to_market)] >= book_to_market[i,j]
-    if(!is.na(condition)) {
-      if(condition) {
-        portfolio_L[i,j] <- 1
-      }
-      else {
-        portfolio_L[i,j] <- 0
-      } 
-    }
-  }
-}
+# add value of 1 to values below median and NA otherwise
+portfolio_L <- apply(book_to_market, 2, function(L) ifelse(L <= Median_BTM, 1, NA))
+# add value of 1 to values above median and NA otherwise
+portfolio_H <- apply(book_to_market, 2, function(H) ifelse(H > Median_BTM, 1, NA))
 
 
 ####### 8.
 
-# Jan 1998: UBS in Portfolio High; Nestle Roche and Novartis are in portfolio Low
-# Jan 2008: All big four are in the Low portfolio
+
 
 
 ####### 9. 
+
+# get portfolio returns
+returns_L <- returns['1991-02-01/2019-12-01'] * portfolio_L['1991-01-01/2019-11-01']
+returns_H <- returns['1991-02-01/2019-12-01'] * portfolio_H['1991-01-01/2019-11-01']
+
+monthly_means_L <- rowMeans(returns_L, na.rm = T)
+monthly_means_H <- rowMeans(returns_H, na.rm = T)
+
+HML_portfolio <- as.data.frame(monthly_means_H - monthly_means_L)
+colnames(HML_portfolio) <- c("PF_HML")
+annualized_mean_return_HML <- (mean(HML_portfolio$PF_HML, na.rm = T)+1)^12-1
+print(annualized_mean_return_HML)
+
+# Plot cumulative Returns 
+Date <- date_monthly[15:nrow(date_monthly),, drop=F]
+cumulative_returns <- cumprod(1+SMB_portfolio$PF_SMB) #doesn't work with 0
+cum_returns <- cbind(Date, cumulative_returns)
+cum_returns$Date <- as.Date(cum_returns$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns$Date, cum_returns$cumulative_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+
+# Calculate Sharpe Ratio
+riskfreerate <- mean(riskfree['1991-02-01/2019-12-01']) #annualized risk-free
+SD_portfolio <- sd(SMB_portfolio$PF_SMB)*sqrt(12)
+SR_portfolio <- (annualized_mean_return-riskfreerate)/SD_portfolio
+print(SR_portfolio)
+
+
+
+
 lag_portfolio_L <- lag(portfolio_L, k=1)
 lag_portfolio_H <- lag(portfolio_H, k=1)
 
