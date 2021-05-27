@@ -13,6 +13,7 @@
  # install.packages("data.table")
  # install.packages("zoo")
  # install.packages("portsort")
+ # install.packages("TTR")
 ###########
 
 # load libraries
@@ -25,6 +26,7 @@ library(ggplot2)
 library(matrixStats)
 library(zoo)
 library(portsort)
+library(TTR)
 
 ###############
 # Data import #
@@ -37,18 +39,14 @@ prices_unadjusted <- read.delim(file = 'A4_dataset_04.txt', header = TRUE, sep =
 riskfree <- read.delim(file = 'A4_dataset_05.txt', header = TRUE, sep = '\t', dec = '.')
 factor_returns <- read.delim(file = 'A4_dataset_06.txt', header = TRUE, sep = '\t', dec = '.')
 
-
-
 # create time-series files and get returns from prices
 date_monthly <- prices_adjusted$Date
 as.data.frame(date_monthly)
-
 prices_adjusted <- xts(prices_adjusted[,-1], order.by = as.Date(prices_adjusted $Date, format = "%d.%m.%Y"))
 returns <- Return.calculate(prices = prices_adjusted, method = 'log')
-
 book_values <- xts(book_values[,-1], order.by = as.Date(book_values$Date, format = "%d.%m.%Y"))
-#####remove book values below 0:
 
+# remove book values below 0:
 for (i in 1:nrow(book_values)) {
   for(j in 1:ncol(book_values)) {
     condition <- book_values[i,j] < 0
@@ -59,8 +57,6 @@ for (i in 1:nrow(book_values)) {
     }
   }
 }
-
-
 
 shares <- xts(shares[,-1], order.by = as.Date(shares$Date, format = "%d.%m.%Y"))
 prices_unadjusted <- xts(prices_unadjusted[,-1], order.by = as.Date(prices_unadjusted$Date, format = "%d.%m.%Y"))
@@ -146,39 +142,26 @@ annualized_mean_return
 # Plot cumulative Returns 
 mean_returns <- as.data.frame(mean_returns)
 mean_returns <- mean_returns[2:nrow(mean_returns),, drop=F]
-#View(mean_returns) #360 entries
-
 Date <- date_monthly[2:nrow(date_monthly),, drop=F]
-
 cumulative_returns <- cumprod(1+mean_returns)
-
 cum_returns <- cbind(Date, cumulative_returns)
 cum_returns$Date <- as.Date(cum_returns$Date, format = "%d.%m.%Y")
-#View(cum_returns)
-
 plot(cum_returns$Date, cum_returns$mean_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
 # Calculate Sharpe Ratio
-
 riskfreerate <- mean(riskfree) #annualized rsikfree
-
 mean_returns$annualized_returns <- ((mean_returns$mean_returns+1)^(12)-1)
-
 SD_portfolio <- sd(mean_returns$annualized_returns) #is that correct ??
-
 SR_portfolio <- (annualized_mean_return-riskfreerate)/SD_portfolio
 print(SR_portfolio)
-
 
 
 ####### 4. Book to market
 
 lagged_book_values <- lag(book_values, k=6)
-
 for (i in 1:384){
   book_to_market <- lagged_book_values[,1:i]/market_cap[,1:i]
 }  
-#View(book_to_market)
 
 
 ####### 7. Calculate median and assign to portfolios
@@ -186,11 +169,8 @@ for (i in 1:384){
 for (i in 1:nrow(book_to_market)){
   medians_2 <- as.data.frame(rowMedians(book_to_market[1:i], na.rm = TRUE))
 }
-#View(medians_2)
 
 book_to_market$medians2 <- medians_2[,1]
-
-View(book_to_market)
 
 portfolio_H <- book_to_market
 
@@ -207,8 +187,6 @@ for (i in 1:nrow(book_to_market)) {
     }
   }
 }
-
-
 
 portfolio_L <- book_to_market
 
@@ -233,28 +211,21 @@ for (i in 1:nrow(book_to_market)) {
 # Jan 2008: All big four are in the Low portfolio
 
 
-
 ####### 9. 
 lag_portfolio_L <- lag(portfolio_L, k=1)
 lag_portfolio_H <- lag(portfolio_H, k=1)
-
-#View(lag_portfolio_B)
 
 #Calculate mean returns for S
 for (i in 1:384){
   returns_L <- returns[,1:i]*(as.numeric(lag_portfolio_L[,1:i]))
 } 
-View(returns_L)
 
 #Calculate mean returns for B
 for (i in 1:384){
   returns_H <- returns[,1:i]*(as.numeric(lag_portfolio_H[,1:i]))
 } 
-View(returns_B)
 
 returns_LH <- returns_L - returns_H
-View(returns_LH)
-
 
 # annualized mean return
 mean_returns_LH <- rowMeans(returns_LH, na.rm = TRUE)
@@ -267,15 +238,12 @@ annualized_mean_return_LH
 mean_returns_LH <- as.data.frame(mean_returns_LH)
 mean_returns_LH <- mean_returns_LH[8:nrow(mean_returns_LH),, drop=F]
 
-View(mean_returns_LH) #354 entries
-
 Date_LH <- date_monthly[8:nrow(date_monthly),, drop=F]
 
 cumulative_returns_LH <- cumprod(1+mean_returns_LH)
 
 cum_returns_LH <- cbind(Date_LH, cumulative_returns_LH)
 cum_returns_LH$Date <- as.Date(cum_returns_LH$Date , format = "%d.%m.%Y")
-#View(cum_returns)
 
 plot(cum_returns_LH$Date, cum_returns_LH$mean_returns_LH, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
@@ -293,29 +261,21 @@ print(SR_portfolio)
 
 ####### 10. 
 returns_company <- round(colMeans(returns, na.rm = T), digits = 6)
-View(returns_company)
 
 
 ####### 11.
-#install.packages("TTR")
-library(TTR)
 momentum <- ROC(prices_adjusted, n = 11, type =  "discrete", na.pad = F)
-View(momentum)
 
 
 ####### 12.
-
 
 for (i in 1:nrow(momentum)){
   medians_3 <- as.data.frame(rowMedians(momentum[1:i], na.rm = TRUE))
 }
 
-View(medians_3)
-
 momentum$medians3 <- medians_3[,1]
 
 momentum_lagged <- lag(momentum, k=1)
-  
   
 portfolio_D <- momentum_lagged #go short on Loser Comapnies D
 
@@ -332,8 +292,6 @@ for (i in 1:nrow(momentum_lagged)) {
     }
   }
 }
-
-
 
 portfolio_U <- momentum_lagged #go long on Winner Comapnies U
 
@@ -354,7 +312,6 @@ for (i in 1:nrow(momentum_lagged)) {
 #lag again to prevent look-ahead bias
 lag_portfolio_U <- lag(portfolio_U, k=1)
 lag_portfolio_D <- lag(portfolio_D, k=1)
-View(lag_portfolio_U)
 
 returns_short <- returns["19901101/20191201"]
 
@@ -362,18 +319,15 @@ returns_short <- returns["19901101/20191201"]
 for (i in 1:384){
   returns_U <- returns_short[,1:i]*(as.numeric(lag_portfolio_U[,1:i]))
 } 
-View(returns_U)
 
 #Calculate mean returns for D
 for (i in 1:384){
   returns_D <- returns_short[,1:i]*(as.numeric(lag_portfolio_D[,1:i]))
 } 
-View(returns_D)
 
 ####### 13.
 
 returns_UD <- returns_U - returns_D
-View(returns_UD)
 
 
 # annualized mean return
@@ -384,19 +338,16 @@ annualized_mean_return_UD
 
 # Plot cumulative Returns 
 mean_returns_UD <- as.data.frame(mean_returns_UD)
-View(mean_returns_UD)
 mean_returns_UD_short <- mean_returns_UD[3:nrow(mean_returns_UD),, drop=F]
 View(mean_returns_UD_short) #348 entries
 
-View(date_monthly)
 Date_UD <- date_monthly[14:nrow(date_monthly),, drop=F] #from 01.01.91
-View(Date_UD)#348 entries
+View(Date_UD) #348 entries
 
 cumulative_returns_UD <- cumprod(1+mean_returns_UD_short)
 
 cum_returns_UD <- cbind(Date_UD, cumulative_returns_UD)
 cum_returns_UD$Date <- as.Date(cum_returns_UD$date_monthly , format = "%d.%m.%Y")
-View(cum_returns_UD)
 
 plot(cum_returns_UD$Date, cum_returns_UD$mean_returns_UD, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
@@ -420,16 +371,10 @@ print(SR_portfolio)
 
 
 ####### 1.
-portfolio_S_new <- portfolio_S["19910101/20191201"]
-portfolio_B_new <- portfolio_B["19910101/20191201"]
-portfolio_H_new <- portfolio_H["19910101/20191201"]
-portfolio_L_new <- portfolio_L["19910101/20191201"]
-portfolio_U_new <- portfolio_U["19910101/20191201"]
-portfolio_D_new <- portfolio_D["19910101/20191201"]
 
+# sort companies into 8 different groups
 
-SHU_sums <- portfolio_S_new + portfolio_H_new + portfolio_U_new
-SHU <- SHU_sums
+SHU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(SHU_sums)) {
   for(j in 1:384) {
     condition <-  SHU_sums[i,j] == 3
@@ -443,10 +388,8 @@ for (i in 1:nrow(SHU_sums)) {
     }
   }
 }
-#View(SHU)
 
-SLU_sums <- portfolio_S_new + portfolio_L_new + portfolio_U_new
-SLU <- SLU_sums
+SLU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(SLU_sums)) {
   for(j in 1:384) {
     condition <-  SLU_sums[i,j] == 3
@@ -461,8 +404,7 @@ for (i in 1:nrow(SLU_sums)) {
   }
 }
 
-SLD_sums <- portfolio_S_new + portfolio_L_new + portfolio_D_new
-SLD <- SLD_sums
+SLD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(SLD_sums)) {
   for(j in 1:384) {
     condition <-  SLD_sums[i,j] == 3
@@ -477,8 +419,7 @@ for (i in 1:nrow(SLD_sums)) {
   }
 }
 
-SHD_sums <- portfolio_S_new + portfolio_H_new + portfolio_D_new
-SHD <- SHD_sums
+SHD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(SHD_sums)) {
   for(j in 1:384) {
     condition <-  SHD_sums[i,j] == 3
@@ -493,8 +434,7 @@ for (i in 1:nrow(SHD_sums)) {
   }
 }
 
-BLD_sums <- portfolio_B_new + portfolio_L_new + portfolio_D_new
-BLD <- BLD_sums
+BLD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(BLD_sums)) {
   for(j in 1:384) {
     condition <-  BLD_sums[i,j] == 3
@@ -510,8 +450,7 @@ for (i in 1:nrow(BLD_sums)) {
 }
 
 
-BHD_sums <- portfolio_B_new + portfolio_H_new + portfolio_D_new
-BHD <- BHD_sums
+BHD <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(BHD_sums)) {
   for(j in 1:384) {
     condition <-  BHD_sums[i,j] == 3
@@ -526,8 +465,7 @@ for (i in 1:nrow(BHD_sums)) {
   }
 }
 
-BLU_sums <- portfolio_B_new + portfolio_L_new + portfolio_U_new
-BLU <- BLU_sums
+BLU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(BLU_sums)) {
   for(j in 1:384) {
     condition <-  BLU_sums[i,j] == 3
@@ -543,8 +481,7 @@ for (i in 1:nrow(BLU_sums)) {
 }
 
 
-BHU_sums <- portfolio_B_new + portfolio_H_new + portfolio_U_new
-BHU <- BHU_sums
+BHU <- portfolio_S["19910101/20191201"] + portfolio_H["19910101/20191201"] + portfolio_U["19910101/20191201"]
 for (i in 1:nrow(BHU_sums)) {
   for(j in 1:384) {
     condition <-  BHU_sums[i,j] == 3
@@ -559,8 +496,6 @@ for (i in 1:nrow(BHU_sums)) {
   }
 }
 
-
-
 #lag to prevent look-ahead bias
 SHU_lag <- lag(SHU, k=1)
 SLU_lag <- lag(SLU, k=1)
@@ -571,7 +506,6 @@ BHD_lag <- lag(BHD, k=1)
 BLU_lag <- lag(BLU, k=1)
 BHU_lag <- lag(BHU, k=1)
 
-#View(BHD_lag)
 
 ####### 2.
 
@@ -648,16 +582,10 @@ for (i in 1:384){
 
 
 SMB <-  0.25*(returns_SHU-returns_BHU+returns_SHD-returns_BHD+returns_SLU-returns_BLU+returns_SLD-returns_BLD)
-#View(SMB)
-
 
 HML <- 0.25*(returns_SHU-returns_SLU+returns_SHD-returns_SLD+returns_BHU-returns_BLU+returns_BHD-returns_BLD)
-#View(HML)
-
 
 MOM <- 0.25*(returns_SHU-returns_SHD+returns_SLU-returns_SLD+returns_BHU-returns_BHD+returns_BLU-returns_BLD)
-#View(MOM)
-
 
 ####### 4.
 #Mean Annualized returns
@@ -682,21 +610,10 @@ print(Annualized_return_MOM)
 
 
 
-
-
-
-
-
 #################
 ### COMMENTS ###
 #################
 
 # 1. Remove negative Book Values
 # 2. Use Log on riskfree return ?
-
-
-
-
-
-
 
