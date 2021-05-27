@@ -145,8 +145,9 @@ portfolio_H <- apply(book_to_market, 2, function(H) ifelse(H > Median_BTM, 1, NA
 ####### 9. 
 
 # get portfolio returns
-returns_L <- returns['1991-02-01/2019-12-01'] * portfolio_L['1991-01-01/2019-11-01']
-returns_H <- returns['1991-02-01/2019-12-01'] * portfolio_H['1991-01-01/2019-11-01']
+returns_short <- returns['1991-02-01/2019-12-01']
+returns_L <- returns_short * portfolio_L[15:nrow(portfolio_L)-1,]
+returns_H <- returns_short * portfolio_H[15:nrow(portfolio_H)-1,]
 
 monthly_means_L <- rowMeans(returns_L, na.rm = T)
 monthly_means_H <- rowMeans(returns_H, na.rm = T)
@@ -158,65 +159,15 @@ print(annualized_mean_return_HML)
 
 # Plot cumulative Returns 
 Date <- date_monthly[15:nrow(date_monthly),, drop=F]
-cumulative_returns <- cumprod(1+SMB_portfolio$PF_SMB) #doesn't work with 0
-cum_returns <- cbind(Date, cumulative_returns)
-cum_returns$Date <- as.Date(cum_returns$date_monthly, format = "%d.%m.%Y")
-plot(cum_returns$Date, cum_returns$cumulative_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+cumulative_returns_HML <- cumprod(1+HML_portfolio$PF_HML) #doesn't work with 0
+cum_returns_HML <- cbind(Date, cumulative_returns_HML)
+cum_returns_HML$Date <- as.Date(cum_returns_HML$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns_HML$Date, cum_returns_HML$cumulative_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
 # Calculate Sharpe Ratio
-riskfreerate <- mean(riskfree['1991-02-01/2019-12-01']) #annualized risk-free
-SD_portfolio <- sd(SMB_portfolio$PF_SMB)*sqrt(12)
-SR_portfolio <- (annualized_mean_return-riskfreerate)/SD_portfolio
-print(SR_portfolio)
-
-
-
-
-lag_portfolio_L <- lag(portfolio_L, k=1)
-lag_portfolio_H <- lag(portfolio_H, k=1)
-
-#Calculate mean returns for S
-for (i in 1:384){
-  returns_L <- returns[,1:i]*(as.numeric(lag_portfolio_L[,1:i]))
-} 
-
-#Calculate mean returns for B
-for (i in 1:384){
-  returns_H <- returns[,1:i]*(as.numeric(lag_portfolio_H[,1:i]))
-} 
-
-returns_LH <- returns_L - returns_H
-
-# annualized mean return
-mean_returns_LH <- rowMeans(returns_LH, na.rm = TRUE)
-
-annualized_mean_return_LH <- (((mean(mean_returns_LH, na.rm = TRUE))+1)^(1/12)-1)*100
-annualized_mean_return_LH
-
-
-# Plot cumulative Returns 
-mean_returns_LH <- as.data.frame(mean_returns_LH)
-mean_returns_LH <- mean_returns_LH[8:nrow(mean_returns_LH),, drop=F]
-
-Date_LH <- date_monthly[8:nrow(date_monthly),, drop=F]
-
-cumulative_returns_LH <- cumprod(1+mean_returns_LH)
-
-cum_returns_LH <- cbind(Date_LH, cumulative_returns_LH)
-cum_returns_LH$Date <- as.Date(cum_returns_LH$date_monthly , format = "%d.%m.%Y")
-
-plot(cum_returns_LH$Date, cum_returns_LH$mean_returns_LH, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
-
-# Calculate Sharpe Ratio
-
-#riskfreerate <- mean(riskfree) #annualized rsikfree
-
-mean_returns_LH$annualized_returns_LH <- ((mean_returns_LH$mean_returns_LH+1)^(1/12)-1)*100
-
-SD_portfolio <- sd(mean_returns_LH$annualized_returns_LH) #is that correct ??
-
-SR_portfolio <- (annualized_mean_return_LH-riskfreerate)/SD_portfolio
-print(SR_portfolio)
+SD_portfolio_HML <- sd(HML_portfolio$PF_HML)*sqrt(12)
+SR_portfolio_HML <- (annualized_mean_return_HML-riskfreerate)/SD_portfolio_HML
+print(SR_portfolio_HML)
 
 
 ####### 10. 
