@@ -223,108 +223,51 @@ print(SR_portfolio)
 
 
 ####### 10. 
-returns_company <- round(colMeans(returns, na.rm = T), digits = 6)
+returns_short <- returns["19901101/20191201"]
 
+returns_company <- round(colMeans(returns_short, na.rm = T), digits = 6)
 
 ####### 11.
-momentum <- ROC(prices_adjusted, n = 11, type =  "discrete", na.pad = F)
-
+momentum <- ROC(prices_adjusted.ts, n = 11, type =  "discrete", na.pad = F)
 
 ####### 12.
-
-for (i in 1:nrow(momentum)){
-  medians_3 <- as.data.frame(rowMedians(momentum[1:i], na.rm = TRUE))
-}
-
-momentum$medians3 <- medians_3[,1]
-
 momentum_lagged <- lag(momentum, k=1)
-  
-portfolio_D <- momentum_lagged #go short on Loser Comapnies D
 
-for (i in 1:nrow(momentum_lagged)) {
-  for(j in 1:ncol(momentum_lagged)) {
-    condition <- momentum_lagged[i,ncol(momentum_lagged)] >= momentum_lagged[i,j] # loser stocks median is bigger or equal to value
-    if(!is.na(condition)) {
-      if(condition) {
-        portfolio_D[i,j] <- 1
-      }
-      else {
-        portfolio_D[i,j] <- 0
-      } 
-    }
-  }
-}
+medians_3 <- rowMedians(momentum_lagged, na.rm=T)
 
-portfolio_U <- momentum_lagged #go long on Winner Comapnies U
-
-for (i in 1:nrow(momentum_lagged)) {
-  for(j in 1:ncol(momentum_lagged)) {
-    condition <- momentum_lagged[i,ncol(momentum_lagged)] < momentum_lagged[i,j] #Winner portfolio median is smaller than values
-    if(!is.na(condition)) {
-      if(condition) {
-        portfolio_U[i,j] <- 1
-      }
-      else {
-        portfolio_U[i,j] <- 0
-      } 
-    }
-  }
-}
-
-#lag again to prevent look-ahead bias
-lag_portfolio_U <- lag(portfolio_U, k=1)
-lag_portfolio_D <- lag(portfolio_D, k=1)
+# Assign to PF U or D
+portfolio_D <- apply(momentum_lagged, 2, function(D) ifelse(D <= medians_3, 1, NA))
+portfolio_U <- apply(momentum_lagged, 2, function(U) ifelse(U > medians_3, 1, NA))
 
 returns_short <- returns["19901101/20191201"]
 
-#Calculate mean returns for U
-for (i in 1:384){
-  returns_U <- returns_short[,1:i]*(as.numeric(lag_portfolio_U[,1:i]))
-} 
+returns_D <- returns_short[2:nrow(returns_short),] * portfolio_D[1:nrow(returns_short)-1,]
+returns_U <- returns_short[2:nrow(returns_short),] * portfolio_U[1:nrow(returns_short)-1,]
 
-#Calculate mean returns for D
-for (i in 1:384){
-  returns_D <- returns_short[,1:i]*(as.numeric(lag_portfolio_D[,1:i]))
-} 
+returns_D_short <- returns_D['1991-02-01/2019-12-01']
+returns_U_short <- returns_U['1991-02-01/2019-12-01']
 
-####### 13.
+monthly_means_D <- rowMeans(returns_D_short, na.rm = T)
+monthly_means_U <- rowMeans(returns_U_short, na.rm = T)
 
-returns_UD <- returns_U - returns_D
+MOM_portfolio <- as.data.frame(monthly_means_U - monthly_means_D)
+colnames(MOM_portfolio) <- c("PF_MOM")
+annualized_mean_return <- (mean(MOM_portfolio$PF_MOM, na.rm = T)+1)^12-1
+print(annualized_mean_return)
 
-
-# annualized mean return
-mean_returns_UD <- rowMeans(returns_UD, na.rm = TRUE)
-
-annualized_mean_return_UD <- (((mean(mean_returns_UD, na.rm = TRUE))+1)^(1/12)-1)*100
-annualized_mean_return_UD
 
 # Plot cumulative Returns 
-mean_returns_UD <- as.data.frame(mean_returns_UD)
-mean_returns_UD_short <- mean_returns_UD[3:nrow(mean_returns_UD),, drop=F]
-View(mean_returns_UD_short) #348 entries
-
-Date_UD <- date_monthly[14:nrow(date_monthly),, drop=F] #from 01.01.91
-View(Date_UD) #348 entries
-
-cumulative_returns_UD <- cumprod(1+mean_returns_UD_short)
-
-cum_returns_UD <- cbind(Date_UD, cumulative_returns_UD)
-cum_returns_UD$Date <- as.Date(cum_returns_UD$date_monthly , format = "%d.%m.%Y")
-
-plot(cum_returns_UD$Date, cum_returns_UD$mean_returns_UD, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+Date <- date_monthly[15:nrow(date_monthly),, drop=F]
+cumulative_returns <- cumprod(1+MOM_portfolio$PF_MOM) #doesn't work with 0
+cum_returns <- cbind(Date, cumulative_returns)
+cum_returns$Date <- as.Date(cum_returns$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns$Date, cum_returns$cumulative_returns, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
 # Calculate Sharpe Ratio
-
-#riskfreerate <- mean(riskfree) #annualized rsikfree
-
-mean_returns_UD_short$annualized_returns_UD <- ((mean_returns_UD_short$mean_returns_UD+1)^(1/12)-1)*100
-
-SD_portfolio <- sd(mean_returns_UD_short$annualized_returns_UD) #is that correct ??
-
-SR_portfolio <- (annualized_mean_return_UD-riskfreerate)/SD_portfolio
-print(SR_portfolio) 
-
+riskfreerate <- mean(riskfree['1991-02-01/2019-12-01']) #annualized risk-free
+SD_portfolio <- sd(MOM_portfolio$PF_MOM)*sqrt(12)
+SR_portfolio <- (annualized_mean_return-riskfreerate)/SD_portfolio
+print(SR_portfolio)
 
 
 #################
