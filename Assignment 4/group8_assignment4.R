@@ -77,67 +77,27 @@ for (i in 1:384){
 }  
 
 ####### 2.
-
 # Calculate the monthly median value of the Market Capitalization
-market_cap$Median_CAP <- rowMedians(market_cap, na.rm=T)
+Median_CAP <- rowMedians(market_cap, na.rm=T)
 
-# create portfolio B
-portfolio_B <- market_cap
-for (i in 1:nrow(market_cap)) {
-  for(j in 1:ncol(market_cap)) {
-    condition <- market_cap[i,ncol(market_cap)] < market_cap[i,j]
-    if(!is.na(condition)) {
-      if(condition) {
-        portfolio_B[i,j] <- 1
-      }
-      else {
-        portfolio_B[i,j] <- 0
-      } 
-    }
-  }
-}
+# add value of 1 to values below median and NA otherwise
+portfolio_S <- apply(market_cap, 2, function(S) ifelse(S <= Median_CAP, 1, NA))
+# add value of 1 to values above median and NA otherwise
+portfolio_B <- apply(market_cap, 2, function(B) ifelse(B > Median_CAP, 1, NA))
 
-# create portfolio S
-# We incorporate all values equal to the median in the portfolio small.
-portfolio_S <- market_cap
-for (i in 1:nrow(market_cap)) {
-  for(j in 1:ncol(market_cap)) {
-    condition <- market_cap[i,ncol(market_cap)] >= market_cap[i,j]
-    if(!is.na(condition)) {
-      if(condition) {
-        portfolio_S[i,j] <- 1
-      }
-      else {
-        portfolio_S[i,j] <- 0
-      } 
-    }
-  }
-}
+returns_S <- returns[2:nrow(returns),] * portfolio_S[1:nrow(returns)-1,]
+returns_B <- returns[2:nrow(returns),] * portfolio_B[1:nrow(returns)-1,]
 
+returns_S_short <- returns_S['1991-02-01/2019-12-01']
+returns_B_short <- returns_B['1991-02-01/2019-12-01']
 
-####### 3.
+monthly_means_S <- rowMeans(returns_S_short, na.rm = T)
+monthly_means_B <- rowMeans(returns_B_short, na.rm = T)
 
-# create lagged portfolios
-lag_portfolio_S <- lag(portfolio_S, k=1)
-lag_portfolio_B <- lag(portfolio_B, k=1)
-
-#Calculate mean returns for S
-for (i in 1:384){
-  returns_S <- returns[,1:i]*(as.numeric(lag_portfolio_S[,1:i]))
-} 
-
-#Calculate mean returns for B
-for (i in 1:384){
-  returns_B <- returns[,1:i]*(as.numeric(lag_portfolio_B[,1:i]))
-} 
-
-# dataframe with return differences
-returns_SMB <- returns_S - returns_B
-
-# annualized mean return
-returns_SMB$means <- rowMeans(returns_SMB, na.rm = TRUE)
-annualized_mean_return <- (((mean(returns_SMB["19910201/20191201",ncol(returns_SMB)]))+1)^(12)-1)
-annualized_mean_return
+SMB_portfolio <- as.data.frame(monthly_means_S - monthly_means_B)
+colnames(SMB_portfolio) <- c("PF_SMB")
+annualized_mean_return <- (mean(SMB_portfolio$PF_SMB, na.rm = T)+1)^12-1
+print(annualized_mean_return)
 
 # Plot cumulative Returns 
 mean_returns <- rowMeans(returns_SMB, na.rm = TRUE)
