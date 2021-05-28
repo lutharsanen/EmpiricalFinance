@@ -283,7 +283,8 @@ BLU <- apply(PF_BLU, 2, function(x) ifelse(x == 3, 1, NA))
 ####### 2.
 
 #Mean size of the portfolios
-Row_sum_SHU <- rowSums(SHU_lead[1:nrow(SHU_lead)-1,], na.rm = T)
+
+Row_sum_SHU <- rowSums(SHU[1:nrow(SHU)-1,], na.rm = T)
 Mean_Size_SHU <- mean(Row_sum_SHU)
 print(Mean_Size_SHU)
 
@@ -291,27 +292,27 @@ Row_sum_SLU <- rowSums(SLU[1:nrow(SLU)-1,], na.rm = T)
 Mean_Size_SLU <- mean(Row_sum_SLU)
 print(Mean_Size_SLU)
 
-Row_sum_SLD <- rowSums(SLD_lag, na.rm = T)
+Row_sum_SLD <- rowSums(SLD[1:nrow(SLD)-1,], na.rm = T)
 Mean_Size_SLD <- mean(Row_sum_SLD)
 print(Mean_Size_SLD)
 
-Row_sum_SHD <- rowSums(SHD_lag, na.rm = T)
+Row_sum_SHD <- rowSums(SHD[1:nrow(SHD)-1,], na.rm = T)
 Mean_Size_SHD <- mean(Row_sum_SHD)
 print(Mean_Size_SHD)
 
-Row_sum_BLD <- rowSums(BLD_lag, na.rm = T)
+Row_sum_BLD <- rowSums(BLD[1:nrow(BLD)-1,], na.rm = T)
 Mean_Size_BLD <- mean(Row_sum_BLD)
 print(Mean_Size_BLD)
 
-Row_sum_BHD <- rowSums(BHD_lag, na.rm = T)
+Row_sum_BHD <- rowSums(BHD[1:nrow(BHD)-1,], na.rm = T)
 Mean_Size_BHD <- mean(Row_sum_BHD)
 print(Mean_Size_BHD)
 
-Row_sum_BLU <- rowSums(BLU_lag, na.rm = T)
+Row_sum_BLU <- rowSums(BLU[1:nrow(BLU)-1,], na.rm = T)
 Mean_Size_BLU <- mean(Row_sum_BLU)
 print(Mean_Size_BLU)
 
-Row_sum_BHU <- rowSums(BHU_lag, na.rm = T)
+Row_sum_BHU <- rowSums(BHU[1:nrow(BHU)-1,], na.rm = T)
 Mean_Size_BHU <- mean(Row_sum_BHU)
 print(Mean_Size_BHU)
 
