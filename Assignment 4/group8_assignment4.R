@@ -27,6 +27,7 @@ library(matrixStats)
 library(zoo)
 library(portsort)
 library(TTR)
+library(dplyr)
 
 ###############
 # Data import #
@@ -269,20 +270,20 @@ BLU <- apply(PF_BLU, 2, function(x) ifelse(x == 3, 1, NA))
 
 
 #lag to prevent look-ahead bias
-SHU_lag <- lag(SHU, k=1)
-SLU_lag <- lag(SLU, k=1)
-SLD_lag <- lag(SLD, k=1)
-SHD_lag <- lag(SHD, k=1)
-BLD_lag <- lag(BLD, k=1)
-BHD_lag <- lag(BHD, k=1)
-BLU_lag <- lag(BLU, k=1)
-BHU_lag <- lag(BHU, k=1)
+SHU_lead <- lead(SHU, n=1)
+SLU_lead <- lead(SLU, k=1)
+SLD_lead <- lead(SLD, k=1)
+SHD_lead <- lead(SHD, k=1)
+BLD_lead <- lead(BLD, k=1)
+BHD_lead <- lead(BHD, k=1)
+BLU_lead <- lead(BLU, k=1)
+BHU_lead <- lead(BHU, k=1)
 
 
 ####### 2.
 
 #Mean size of the portfolios
-Row_sum_SHU <- rowSums(SHU_lag, na.rm = T)
+Row_sum_SHU <- rowSums(SHU_lead[1:nrow(SHU_lead)-1,], na.rm = T)
 Mean_Size_SHU <- mean(Row_sum_SHU)
 print(Mean_Size_SHU)
 
