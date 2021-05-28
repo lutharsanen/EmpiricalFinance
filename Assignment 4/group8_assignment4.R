@@ -27,7 +27,6 @@ library(matrixStats)
 library(zoo)
 library(portsort)
 library(TTR)
-library(dplyr)
 
 ###############
 # Data import #
@@ -269,21 +268,10 @@ PF_BLU = B['19910101/20191201'] + L['19910101/20191201'] + U['19910101/20191201'
 BLU <- apply(PF_BLU, 2, function(x) ifelse(x == 3, 1, NA))
 
 
-#lag to prevent look-ahead bias
-#SHU_lead <- lead(SHU, n=1)
-#SLU_lead <- lead(SLU, k=1)
-#SLD_lead <- lead(SLD, k=1)
-#SHD_lead <- lead(SHD, k=1)
-#BLD_lead <- lead(BLD, k=1)
-#BHD_lead <- lead(BHD, k=1)
-#BLU_lead <- lead(BLU, k=1)
-#BHU_lead <- lead(BHU, k=1)
-
-
 ####### 2.
 
 #Mean size of the portfolios
-Row_sum_SHU <- rowSums(SHU_lead[1:nrow(SHU_lead)-1,], na.rm = T)
+Row_sum_SHU <- rowSums(SHU[1:nrow(SHU)-1,], na.rm = T) #take sorting of previous month
 Mean_Size_SHU <- mean(Row_sum_SHU)
 print(Mean_Size_SHU)
 
@@ -291,89 +279,122 @@ Row_sum_SLU <- rowSums(SLU[1:nrow(SLU)-1,], na.rm = T)
 Mean_Size_SLU <- mean(Row_sum_SLU)
 print(Mean_Size_SLU)
 
-Row_sum_SLD <- rowSums(SLD_lag, na.rm = T)
+Row_sum_SLD <- rowSums(SLU[1:nrow(SLD)-1,], na.rm = T)
 Mean_Size_SLD <- mean(Row_sum_SLD)
 print(Mean_Size_SLD)
 
-Row_sum_SHD <- rowSums(SHD_lag, na.rm = T)
+Row_sum_SHD <- rowSums(SLU[1:nrow(SHD)-1,], na.rm = T)
 Mean_Size_SHD <- mean(Row_sum_SHD)
 print(Mean_Size_SHD)
 
-Row_sum_BLD <- rowSums(BLD_lag, na.rm = T)
+Row_sum_BLD <- rowSums(SLU[1:nrow(BLD)-1,], na.rm = T)
 Mean_Size_BLD <- mean(Row_sum_BLD)
 print(Mean_Size_BLD)
 
-Row_sum_BHD <- rowSums(BHD_lag, na.rm = T)
+Row_sum_BHD <- rowSums(SLU[1:nrow(BHD)-1,], na.rm = T)
 Mean_Size_BHD <- mean(Row_sum_BHD)
 print(Mean_Size_BHD)
 
-Row_sum_BLU <- rowSums(BLU_lag, na.rm = T)
+Row_sum_BLU <- rowSums(SLU[1:nrow(BLU)-1,], na.rm = T)
 Mean_Size_BLU <- mean(Row_sum_BLU)
 print(Mean_Size_BLU)
 
-Row_sum_BHU <- rowSums(BHU_lag, na.rm = T)
+Row_sum_BHU <- rowSums(SLU[1:nrow(BHU)-1,], na.rm = T)
 Mean_Size_BHU <- mean(Row_sum_BHU)
 print(Mean_Size_BHU)
 
 
 ####### 3.
 # Create factor-mimicking-portfolios
-returns_new <- returns["19910101/20191201"]
 
-for (i in 1:384){
-  returns_SHU <- returns_new[,1:i]*(as.numeric(SHU_lag[,1:i]))
+# get returns for stocks in subportfolios
+returns_new <- returns["19910201/20191201"]
+for (i in 1:nrow(returns_new)){
+  returns_SHU <- returns_new[,1:i]*(as.numeric(SHU[1:nrow(SHU)-1,1:i]))
+} 
+for (i in 1:nrow(returns_new)){
+  returns_SLU <- returns_new[,1:i]*(as.numeric(SLU[1:nrow(SLU)-1,1:i]))
+}
+for (i in 1:nrow(returns_new)){
+  returns_SLD <- returns_new[,1:i]*(as.numeric(SLD[1:nrow(SLD)-1,1:i]))
+} 
+for (i in 1:nrow(returns_new)){
+  returns_SHD <- returns_new[,1:i]*(as.numeric(SHD[1:nrow(SHD)-1,1:i]))
+} 
+for (i in 1:nrow(returns_new)){
+  returns_BLD <- returns_new[,1:i]*(as.numeric(BLD[1:nrow(BLD)-1,1:i]))
+} 
+for (i in 1:nrow(returns_new)){
+  returns_BHD <- returns_new[,1:i]*(as.numeric(BHD[1:nrow(BHD)-1,1:i]))
+} 
+for (i in 1:nrow(returns_new)){
+  returns_BLU <- returns_new[,1:i]*(as.numeric(BLU[1:nrow(BLU)-1,1:i]))
+} 
+for (i in 1:nrow(returns_new)){
+  returns_BHU <- returns_new[,1:i]*(as.numeric(BHU[1:nrow(BHU)-1,1:i]))
 } 
 
-for (i in 1:384){
-  returns_SLU <- returns_new[,1:i]*(as.numeric(SLU_lag[,1:i]))
-} 
+# monthly mean returns of the subportfolios
+monthly_means_SLD <- rowMeans(returns_SLD, na.rm=T)
+monthly_means_SLU <- rowMeans(returns_SLU, na.rm=T)
+monthly_means_SHD <- rowMeans(returns_SHD, na.rm=T)
+monthly_means_SHU <- rowMeans(returns_SHU, na.rm=T)
+monthly_means_BLD <- rowMeans(returns_BLD, na.rm=T)
+monthly_means_BLU <- rowMeans(returns_BLU, na.rm=T)
+monthly_means_BHD <- rowMeans(returns_BHD, na.rm=T)
+monthly_means_BHU <- rowMeans(returns_BHU, na.rm=T)
 
-for (i in 1:384){
-  returns_SLD <- returns_new[,1:i]*(as.numeric(SLD_lag[,1:i]))
-} 
+# factor-mimicking portfolios
+SMB <-  as.data.frame(0.25*(monthly_means_SHU-monthly_means_BHU+monthly_means_SHD-monthly_means_BHD+monthly_means_SLU-monthly_means_BLU+monthly_means_SLD-monthly_means_BLD))
+HML <- as.data.frame(0.25*(monthly_means_SHU-monthly_means_SLU+monthly_means_SHD-monthly_means_SLD+monthly_means_BHU-monthly_means_BLU+monthly_means_BHD-monthly_means_BLD))
+MOM <- as.data.frame(0.25*(monthly_means_SHU-monthly_means_SHD+monthly_means_SLU-monthly_means_SLD+monthly_means_BHU-monthly_means_BHD+monthly_means_BLU-monthly_means_BLD))
+colnames(SMB) <- c("PF_SMB")
+colnames(HML) <- c("PF_HML")
+colnames(MOM) <- c("PF_MOM")
 
-for (i in 1:384){
-  returns_SHD <- returns_new[,1:i]*(as.numeric(SHD_lag[,1:i]))
-} 
-
-for (i in 1:384){
-  returns_BLD <- returns_new[,1:i]*(as.numeric(BLD_lag[,1:i]))
-} 
-
-for (i in 1:384){
-  returns_BHD <- returns_new[,1:i]*(as.numeric(BHD_lag[,1:i]))
-} 
-
-for (i in 1:384){
-  returns_BLU <- returns_new[,1:i]*(as.numeric(BLU_lag[,1:i]))
-} 
-
-for (i in 1:384){
-  returns_BHU <- returns_new[,1:i]*(as.numeric(BHU_lag[,1:i]))
-} 
-
-
-
-SMB <-  0.25*(returns_SHU-returns_BHU+returns_SHD-returns_BHD+returns_SLU-returns_BLU+returns_SLD-returns_BLD)
-
-HML <- 0.25*(returns_SHU-returns_SLU+returns_SHD-returns_SLD+returns_BHU-returns_BLU+returns_BHD-returns_BLD)
-
-MOM <- 0.25*(returns_SHU-returns_SHD+returns_SLU-returns_SLD+returns_BHU-returns_BHD+returns_BLU-returns_BLD)
 
 ####### 4.
 #Mean Annualized returns
+annualized_mean_return_SMB <- (mean(SMB$PF_SMB, na.rm = T)+1)^12-1
+print(annualized_mean_return_SMB)
 
-Annualized_return_SMB <- ((mean(rowMeans(SMB, na.rm = T), na.rm = T)+1)^(12)-1)
-print(Annualized_return_SMB)
+annualized_mean_return_HML <- (mean(HML$PF_HML, na.rm = T)+1)^12-1
+print(annualized_mean_return_HML)
 
-Annualized_return_HML <- ((mean(rowMeans(HML, na.rm = T), na.rm = T)+1)^(12)-1)
-print(Annualized_return_HML)
+annualized_mean_return_MOM <- (mean(MOM$PF_MOM, na.rm = T)+1)^12-1
+print(annualized_mean_return_MOM)
 
-Annualized_return_MOM <- ((mean(rowMeans(MOM, na.rm = T), na.rm = T)+1)^(12)-1)
-print(Annualized_return_MOM)
+# Sharpe Ratios
+SD_SMB <- sd(SMB$PF_SMB)*sqrt(12)
+SR_SMB <- (annualized_mean_return_SMB-riskfreerate)/SD_SMB
+print(SR_SMB)
 
-####### 5. 
+SD_HML <- sd(HML$PF_HML)*sqrt(12)
+SR_HML <- (annualized_mean_return_HML-riskfreerate)/SD_HML
+print(SR_HML)
 
+SD_MOM <- sd(MOM$PF_MOM)*sqrt(12)
+SR_MOM <- (annualized_mean_return_MOM-riskfreerate)/SD_MOM
+print(SR_MOM)
+
+
+####### 5.
+
+#plot cumulative returns
+cumulative_returns_SMB <- cumprod(1+SMB$PF_SMB)
+cum_returns_SMB <- cbind(Date, cumulative_returns_SMB)
+cum_returns_SMB$Date <- as.Date(cum_returns_SMB$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns_SMB$Date, cum_returns_SMB$cumulative_returns_SMB, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+
+cumulative_returns_HML <- cumprod(1+HML$PF_HML)
+cum_returns_HML <- cbind(Date, cumulative_returns_HML)
+cum_returns_HML$Date <- as.Date(cum_returns_HML$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns_HML$Date, cum_returns_HML$cumulative_returns_HML, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
+
+cumulative_returns_SMB <- cumprod(1+SMB$PF_SMB)
+cum_returns_SMB <- cbind(Date, cumulative_returns_SMB)
+cum_returns_SMB$Date <- as.Date(cum_returns_SMB$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns_SMB$Date, cum_returns_SMB$cumulative_returns_SMB, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time")
 
 
 
