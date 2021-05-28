@@ -309,28 +309,28 @@ print(Mean_Size_BHU)
 
 # get returns for stocks in subportfolios
 returns_new <- returns["19910201/20191201"]
-for (i in 1:nrow(returns_new)){
+for (i in 1:ncol(returns_new)){
   returns_SHU <- returns_new[,1:i]*(as.numeric(SHU[1:nrow(SHU)-1,1:i]))
 } 
-for (i in 1:nrow(returns_new)){
+for (i in 1:ncol(returns_new)){
   returns_SLU <- returns_new[,1:i]*(as.numeric(SLU[1:nrow(SLU)-1,1:i]))
 }
-for (i in 1:nrow(returns_new)){
+for (i in 1:ncol(returns_new)){
   returns_SLD <- returns_new[,1:i]*(as.numeric(SLD[1:nrow(SLD)-1,1:i]))
 } 
-for (i in 1:nrow(returns_new)){
+for (i in 1:ncol(returns_new)){
   returns_SHD <- returns_new[,1:i]*(as.numeric(SHD[1:nrow(SHD)-1,1:i]))
 } 
-for (i in 1:nrow(returns_new)){
+for (i in 1:ncol(returns_new)){
   returns_BLD <- returns_new[,1:i]*(as.numeric(BLD[1:nrow(BLD)-1,1:i]))
 } 
-for (i in 1:nrow(returns_new)){
+for (i in 1:ncol(returns_new)){
   returns_BHD <- returns_new[,1:i]*(as.numeric(BHD[1:nrow(BHD)-1,1:i]))
 } 
-for (i in 1:nrow(returns_new)){
+for (i in 1:ncol(returns_new)){
   returns_BLU <- returns_new[,1:i]*(as.numeric(BLU[1:nrow(BLU)-1,1:i]))
 } 
-for (i in 1:nrow(returns_new)){
+for (i in 1:ncol(returns_new)){
   returns_BHU <- returns_new[,1:i]*(as.numeric(BHU[1:nrow(BHU)-1,1:i]))
 } 
 
@@ -402,12 +402,35 @@ plot(cum_returns_SMB$Date, cum_returns_SMB$cumulative_returns_SMB, type = "l", l
 ###  Ex 5.3  ###
 #################
 
+####### 1.
 
+## calculate weight of stocks within subportfolios
+MC <- market_cap["19910101/20191201"]
+MC_BHD <- MC*BHD
+MCsum_BHD <- rowSums(MC_BHD,na.rm = T)
+weights_BHD <- apply(MC_BHD, 2, function(c) ifelse(!is.na(c), c/MCsum_BHD, NA))
+MC_BHU <- MC*BHU
+MCsum_BHU <- rowSums(MC_BHU,na.rm = T)
+weights_BHU <- apply(MC_BHU, 2, function(c) ifelse(!is.na(c), c/MCsum_BHU, NA))  
+MC_BLD <- MC*BLD
+MCsum_BLD <- rowSums(MC_BLD,na.rm = T)
+weights_BLD <- apply(MC_BLD, 2, function(c) ifelse(!is.na(c), c/MCsum_BLD, NA))
+MC_BLU <- MC*BLU
+MCsum_BLU <- rowSums(MC_BLU,na.rm = T)
+weights_BLU <- apply(MC_BLU, 2, function(c) ifelse(!is.na(c), c/MCsum_BLU, NA))
+MC_SHD <- MC*SHD
+MCsum_SHD <- rowSums(MC_SHD,na.rm = T)
+weights_SHD <- apply(MC_SHD, 2, function(c) ifelse(!is.na(c), c/MCsum_SHD, NA))
+MC_SHU <- MC*SHU
+MCsum_SHU <- rowSums(MC_SHU,na.rm = T)
+weights_SHU <- apply(MC_SHU, 2, function(c) ifelse(!is.na(c), c/MCsum_SHU, NA))
+MC_SLD <- MC*SLD
+MCsum_SLD <- rowSums(MC_SLD,na.rm = T)
+weights_SLD <- apply(MC_SLD, 2, function(c) ifelse(!is.na(c), c/MCsum_SLD, NA))
+MC_SLU <- MC*SLU
+MCsum_SLU <- rowSums(MC_SLU,na.rm = T)
+weights_SLU <- apply(MC_SLU, 2, function(c) ifelse(!is.na(c), c/MCsum_SLU, NA))
 
-#################
-### COMMENTS ###
-#################
-
-# 1. Remove negative Book Values
-# 2. Use Log on riskfree return ?
+# take weighting of previous period (to prevent look-ahead bias) and multiply with returns 
+VW_returns_BHD <- 
 
