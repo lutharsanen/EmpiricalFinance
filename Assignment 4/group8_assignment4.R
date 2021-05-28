@@ -279,27 +279,27 @@ Row_sum_SLU <- rowSums(SLU[1:nrow(SLU)-1,], na.rm = T)
 Mean_Size_SLU <- mean(Row_sum_SLU)
 print(Mean_Size_SLU)
 
-Row_sum_SLD <- rowSums(SLU[1:nrow(SLD)-1,], na.rm = T)
+Row_sum_SLD <- rowSums(SLD[1:nrow(SLD)-1,], na.rm = T)
 Mean_Size_SLD <- mean(Row_sum_SLD)
 print(Mean_Size_SLD)
 
-Row_sum_SHD <- rowSums(SLU[1:nrow(SHD)-1,], na.rm = T)
+Row_sum_SHD <- rowSums(SHD[1:nrow(SHD)-1,], na.rm = T)
 Mean_Size_SHD <- mean(Row_sum_SHD)
 print(Mean_Size_SHD)
 
-Row_sum_BLD <- rowSums(SLU[1:nrow(BLD)-1,], na.rm = T)
+Row_sum_BLD <- rowSums(BLD[1:nrow(BLD)-1,], na.rm = T)
 Mean_Size_BLD <- mean(Row_sum_BLD)
 print(Mean_Size_BLD)
 
-Row_sum_BHD <- rowSums(SLU[1:nrow(BHD)-1,], na.rm = T)
+Row_sum_BHD <- rowSums(BHD[1:nrow(BHD)-1,], na.rm = T)
 Mean_Size_BHD <- mean(Row_sum_BHD)
 print(Mean_Size_BHD)
 
-Row_sum_BLU <- rowSums(SLU[1:nrow(BLU)-1,], na.rm = T)
+Row_sum_BLU <- rowSums(BLU[1:nrow(BLU)-1,], na.rm = T)
 Mean_Size_BLU <- mean(Row_sum_BLU)
 print(Mean_Size_BLU)
 
-Row_sum_BHU <- rowSums(SLU[1:nrow(BHU)-1,], na.rm = T)
+Row_sum_BHU <- rowSums(BHU[1:nrow(BHU)-1,], na.rm = T)
 Mean_Size_BHU <- mean(Row_sum_BHU)
 print(Mean_Size_BHU)
 
