@@ -431,6 +431,67 @@ MC_SLU <- MC*SLU
 MCsum_SLU <- rowSums(MC_SLU,na.rm = T)
 weights_SLU <- apply(MC_SLU, 2, function(c) ifelse(!is.na(c), c/MCsum_SLU, NA))
 
-# take weighting of previous period (to prevent look-ahead bias) and multiply with returns 
-VW_returns_BHD <- 
+# take weighting of previous period (to prevent look-ahead bias) and multiply with returns, then sum up
+VW_returns_BHD <- weights_BHD[1:nrow(weights_BHD)-1,]*returns_BHD
+VW_monthly_BHD <- rowSums(VW_returns_BHD,na.rm=T)
+VW_returns_BHU <- weights_BHU[1:nrow(weights_BHU)-1,]*returns_BHU
+VW_monthly_BHU <- rowSums(VW_returns_BHU,na.rm=T)
+VW_returns_BLD <- weights_BLD[1:nrow(weights_BLD)-1,]*returns_BLD
+VW_monthly_BLD <- rowSums(VW_returns_BLD,na.rm=T)
+VW_returns_BLU <- weights_BLU[1:nrow(weights_BLU)-1,]*returns_BLU
+VW_monthly_BLU <- rowSums(VW_returns_BLU,na.rm=T)
+VW_returns_SHD <- weights_SHD[1:nrow(weights_SHD)-1,]*returns_SHD
+VW_monthly_SHD <- rowSums(VW_returns_SHD,na.rm=T)
+VW_returns_SHU <- weights_SHU[1:nrow(weights_SHU)-1,]*returns_SHU
+VW_monthly_SHU <- rowSums(VW_returns_SHU,na.rm=T)
+VW_returns_SLD <- weights_SLD[1:nrow(weights_SLD)-1,]*returns_SLD
+VW_monthly_SLD <- rowSums(VW_returns_SLD,na.rm=T)
+VW_returns_SLU <- weights_SLU[1:nrow(weights_SLU)-1,]*returns_SLU
+VW_monthly_SLU <- rowSums(VW_returns_SLU,na.rm=T)
 
+# factor-mimicking portfolios
+SMB_VW <-  as.data.frame(0.25*(VW_monthly_SHU-VW_monthly_BHU+VW_monthly_SHD-VW_monthly_BHD+VW_monthly_SLU-VW_monthly_BLU+VW_monthly_SLD-VW_monthly_BLD))
+HML_VW <- as.data.frame(0.25*(VW_monthly_SHU-VW_monthly_SLU+VW_monthly_SHD-VW_monthly_SLD+VW_monthly_BHU-VW_monthly_BLU+VW_monthly_BHD-VW_monthly_BLD))
+MOM_VW <- as.data.frame(0.25*(VW_monthly_SHU-VW_monthly_SHD+VW_monthly_SLU-VW_monthly_SLD+VW_monthly_BHU-VW_monthly_BHD+VW_monthly_BLU-VW_monthly_BLD))
+colnames(SMB_VW) <- c("VW_SMB")
+colnames(HML_VW) <- c("VW_HML")
+colnames(MOM_VW) <- c("VW_MOM")
+
+
+####### 2.
+
+# annualize returns
+ann_vw_return_SMB <- (mean(SMB_VW$VW_SMB, na.rm = T)+1)^12-1
+print(ann_vw_return_SMB) # slightly off, maybe because done manually and not with tibble
+ann_vw_return_HML <- (mean(HML_VW$VW_HML, na.rm = T)+1)^12-1
+print(ann_vw_return_HML)
+ann_vw_return_MOM <- (mean(MOM_VW$VW_MOM, na.rm = T)+1)^12-1
+print(ann_vw_return_MOM)
+
+# Sharpe Ratios
+SD_SMB_VW <- sd(SMB_VW$VW_SMB)*sqrt(12)
+SR_SMB_VW <- (ann_vw_return_SMB-riskfreerate)/SD_SMB_VW
+print(SR_SMB_VW)
+SD_HML_VW <- sd(HML_VW$VW_HML)*sqrt(12)
+SR_HML_VW <- (ann_vw_return_HML-riskfreerate)/SD_HML_VW
+print(SR_HML_VW)
+SD_MOM_VW <- sd(MOM_VW$VW_MOM)*sqrt(12)
+SR_MOM_VW <- (ann_vw_return_MOM-riskfreerate)/SD_MOM_VW
+print(SR_MOM_VW)
+
+
+####### 3.
+
+#plot cumulative returns
+cumulative_returns_SMB_VW <- cumprod(1+SMB_VW$VW_SMB)
+cum_returns_SMB_VW <- cbind(Date, cumulative_returns_SMB_VW)
+cum_returns_SMB_VW$Date <- as.Date(cum_returns_SMB_VW$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns_SMB_VW$Date, cum_returns_SMB_VW$cumulative_returns_SMB, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time", main="Value-Weighted SMB: Cumulative Returns")
+cumulative_returns_HML_VW <- cumprod(1+HML_VW$VW_HML)
+cum_returns_HML_VW <- cbind(Date, cumulative_returns_HML_VW)
+cum_returns_HML_VW$Date <- as.Date(cum_returns_HML_VW$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns_HML_VW$Date, cum_returns_HML_VW$cumulative_returns_HML, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time", main="Value-Weighted HML: Cumulative Returns")
+cumulative_returns_MOM_VW <- cumprod(1+MOM_VW$VW_MOM)
+cum_returns_MOM_VW <- cbind(Date, cumulative_returns_MOM_VW)
+cum_returns_MOM_VW$Date <- as.Date(cum_returns_MOM_VW$date_monthly, format = "%d.%m.%Y")
+plot(cum_returns_MOM_VW$Date, cum_returns_MOM_VW$cumulative_returns_MOM, type = "l", lty = 1,  lwd = 3, col = "blue", ylab = "Cumulative Return", xlab = "Time", main="Value-Weighted MOM: Cumulative Returns")
